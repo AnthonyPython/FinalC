@@ -5023,7 +5023,14 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 
 	CTakeDamageInfo info_modified = info;
 
-	if ( info_modified.GetDamageType() & DMG_USE_HITLOCATIONS )
+	CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+
+	int nCanUseHitLocations = 0;
+
+	CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, nCanUseHitLocations, use_hit_locations);
+
+
+	if (nCanUseHitLocations || (info_modified.GetDamageType() & DMG_USE_HITLOCATIONS))
 	{
 		switch ( ptr->hitgroup )
 		{
@@ -5049,6 +5056,8 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 					if ( flDistance > 1200 )
 						bCritical = false;
 				}
+
+
 
 				if ( bCritical )
 				{
@@ -5084,6 +5093,125 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 
 				info_modified.SetDamage( flDamage );
 
+				break;
+			}
+			case HITGROUP_CHEST:
+			{
+				// We did a chest shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, chestshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
+				break;
+			}
+			case HITGROUP_STOMACH:
+			{
+				// We did a stomach shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, stomachshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
+				break;
+			}
+			case HITGROUP_LEFTARM:
+			{
+				// We did a left arm shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, leftarmshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
+				break;
+			}
+			case HITGROUP_RIGHTARM:
+			{
+				// We did a right arm shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, rightarmshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
+				break;
+			}
+			case HITGROUP_LEFTLEG:
+			{
+				// We did a left leg shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, leftlegshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
+				break;
+			}
+			case HITGROUP_RIGHTLEG:
+			{
+				// We did a right leg shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, rightlegshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
+				break;
+			}
+			case HITGROUP_GEAR:
+			{
+				// We did a gear shot, check if that affects our damage.
+				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
+				if (pWpn)
+				{
+					float flBodyshotModifer = 1.0f;
+					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, gearshot_damage_modify);
+					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					{
+						float flDamage = info_modified.GetDamage();
+						flDamage *= flBodyshotModifer;
+						info_modified.SetDamage(flDamage);
+					}
+				}
 				break;
 			}
 			default:

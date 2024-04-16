@@ -148,7 +148,7 @@
 #include "haptics/haptic_msgs.h"
 
 // Discord RPC
-#include "irichpresenceclient.h"
+//#include "irichpresenceclient.h"
 
 extern vgui::IInputInternal *g_InputInternal;
 
@@ -1699,10 +1699,10 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 	tempents->LevelInit();
 	ResetToneMapping(1.0);
 	
-	if ( rpc )
+	/*if (rpc)
 	{
 		rpc->SetLevelName( pMapName );
-	}
+	}*/
 
 	IGameSystem::LevelInitPreEntityAllSystems(pMapName);
 
