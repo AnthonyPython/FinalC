@@ -17888,6 +17888,166 @@
 			"hidden"			"1"
 			"stored_as_integer"	"1"
 		}
+		"3019"
+		{
+			"name"	"headshots become minicrits"
+			"attribute_class"	"headshots_become_minicrits"
+			"description_string"	"#Attrib_HeadshotsBecomeMiniCrits"
+			"description_format"	"value_is_additive"
+			"hidden"	"1"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3020"
+		{
+			"name"	"use hit location"
+			"attribute_class"	"use_hit_locations"
+			"description_string"	"#Attrib_UseHitLocations"
+			"description_format"	"value_is_additive"
+			"hidden"	"1"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3021"
+		{
+			"name"	"chestshot damage decrease"
+			"attribute_class"	"chestshot_damage_modify"
+			"description_string"	"#Attrib_ChestshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3022"
+		{
+			"name"	"chestshot damage increase"
+			"attribute_class"	"chestshot_damage_modify"
+			"description_string"	"#Attrib_ChestshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3023"
+		{
+			"name"	"stomachshot damage decrease"
+			"attribute_class"	"stomachshot_damage_modify"
+			"description_string"	"#Attrib_StomachshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3024"
+		{
+			"name"	"stomachshot damage increase"
+			"attribute_class"	"stomachshot_damage_modify"
+			"description_string"	"#Attrib_StomachshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3025"
+		{
+			"name"	"leftarmshot damage decrease"
+			"attribute_class"	"leftarmshot_damage_modify"
+			"description_string"	"#Attrib_LeftarmshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3026"
+		{
+			"name"	"leftarmshot damage increase"
+			"attribute_class"	"leftarmshot_damage_modify"
+			"description_string"	"#Attrib_LeftarmshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3027"
+		{
+			"name"	"rightarmshot damage decrease"
+			"attribute_class"	"rightarmshot_damage_modify"
+			"description_string"	"#Attrib_RightarmshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3028"
+		{
+			"name"	"rightarmshot damage increase"
+			"attribute_class"	"rightarmshot_damage_modify"
+			"description_string"	"#Attrib_RightarmshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3029"
+		{
+			"name"	"leftlegshot damage decrease"
+			"attribute_class"	"leftlegshot_damage_modify
+			"description_string"	"#Attrib_LeftlegshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3030"
+		{
+			"name"	"leftlegshot damage increase"
+			"attribute_class"	"leftlegshot_damage_modify"
+			"description_string"	"#Attrib_LeftlegshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3031"
+		{
+			"name"	"rightlegshot damage decrease"
+			"attribute_class"	"rightlegshot_damage_modify"
+			"description_string"	"#Attrib_RightlegshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3032"
+		{
+			"name"	"rightlegshot damage increase"
+			"attribute_class"	"rightlegshot_damage_modify"
+			"description_string"	"#Attrib_RightlegshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3033"
+		{
+			"name"	"gearshot damage decrease"
+			"attribute_class"	"gearshot_damage_modify"
+			"description_string"	"#Attrib_GearshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3034"
+		{
+			"name"	"gearshot damage increase"
+			"attribute_class"	"gearshot_damage_modify"
+			"description_string"	"#Attrib_GearshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
 		"10001"
 		{
 			"name"	"spawn ammo override"
