@@ -12,7 +12,7 @@ PlayerClass
 	"speed_max"		"300"
 //	"health_max"		"80"
 //	"armor_max"		"50"
-	"health_max"		"125"
+	"health_max"		"212"
 	"armor_max"		"0"
 
 	// Grenades.
@@ -20,12 +20,12 @@ PlayerClass
 	"grenade2"		"TF_WEAPON_GRENADE_EMP"
 
 	// Weapons.
-	"weapon1"		"TF_WEAPON_SHOTGUN_PRIMARY"
-	"weapon2"		"TF_WEAPON_PISTOL"
-	"weapon1"		"TF_WEAPON_WRENCH"
+	"weapon1"		"TF_WEAPON_BUILDER"
+	"weapon2"		"TF_WEAPON_SHOTGUN_PRIMARY"
+	"weapon3"		"TF_WEAPON_WRENCH"
 	"weapon4"		"TF_WEAPON_PDA_ENGINEER_BUILD"
 	"weapon5"		"TF_WEAPON_PDA_ENGINEER_DESTROY"
-	"weapon6"		"TF_WEAPON_BUILDER"
+	"weapon6"		""
 	"weapon7"		""
 	"weapon8"		""
 	"weapon9"		""
@@ -34,8 +34,6 @@ PlayerClass
 	
 	// Buildables
 	"buildable1"	"OBJ_SENTRYGUN"
-	"buildable2"	"OBJ_DISPENSER"
-	"buildable3"	"OBJ_TELEPORTER"
 
 	//Thirdperson
 	"cameraoffset_forward"	"85"
@@ -45,11 +43,11 @@ PlayerClass
 	
 	AmmoMax
 	{
-		"tf_ammo_primary"	"32"
+		"tf_ammo_primary"	"36"
 		"tf_ammo_secondary"	"200"
 		"tf_ammo_metal"		"200"
 		"tf_ammo_grenades1"	"1"
-		"tf_ammo_grenades2"	"1"
+		"tf_ammo_grenades2"	"24"
 	}	
 
 	// Death Sounds

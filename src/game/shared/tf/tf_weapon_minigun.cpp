@@ -1036,10 +1036,10 @@ float CTFMinigun::GetBarrelRotation( void )
 void CTFMinigun::CreateMove( float flInputSampleTime, CUserCmd *pCmd, const QAngle &vecOldViewAngles )
 {
 	// Prevent jumping while firing
-	if ( m_iWeaponState != AC_STATE_IDLE )
+	/*if (m_iWeaponState != AC_STATE_IDLE)
 	{
 		pCmd->buttons &= ~IN_JUMP;
-	}
+	}*/
 
 	BaseClass::CreateMove( flInputSampleTime, pCmd, vecOldViewAngles );
 }

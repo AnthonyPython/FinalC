@@ -27,14 +27,14 @@ WeaponData
 	"default_clip"			"6"
 	"ProjectileType"		"projectile_bullet"
 	"AmmoPerShot"			"1"
-	"MaxAmmo"			"32"
+	"MaxAmmo"			"36"
 	
 	"DoInstantEjectBrass"	"0"
 	"BrassModel"			"models/weapons/shells/shell_shotgun.mdl"	
 	"TracerEffect"		"bullet_shotgun_tracer01"
 
 	// Buckets.
-	"bucket"			"0"
+	"bucket"			"1"
 	"bucket_position"		"0"
 
 	// Animation.

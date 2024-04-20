@@ -23,6 +23,31 @@
 
 using namespace vgui;
 
+//-----------------------------------------------------------------------------
+// Purpose: RecvProxy that converts the Team's player UtlVector to entindexes
+//-----------------------------------------------------------------------------
+void RecvProxy_SHealingList(const CRecvProxyData* pData, void* pStruct, void* pOut)
+{
+	C_ObjectSentrygun* pDispenser = (C_ObjectSentrygun*)pStruct;
+
+	CBaseHandle* pHandle = (CBaseHandle*)(&(pDispenser->m_hHealingTargets[pData->m_iElement]));
+	RecvProxy_IntToEHandle(pData, pStruct, pHandle);
+
+	// update the heal beams
+	pDispenser->m_bUpdateHealingTargets = true;
+}
+
+void RecvProxyArrayLength_SHealingArray(void* pStruct, int objectID, int currentArrayLength)
+{
+	C_ObjectSentrygun* pDispenser = (C_ObjectSentrygun*)pStruct;
+
+	if (pDispenser->m_hHealingTargets.Size() != currentArrayLength)
+		pDispenser->m_hHealingTargets.SetSize(currentArrayLength);
+
+	// update the heal beams
+	pDispenser->m_bUpdateHealingTargets = true;
+}
+
 
 IMPLEMENT_NETWORKCLASS_ALIASED( TFProjectile_SentryRocket, DT_TFProjectile_SentryRocket )
 
@@ -40,6 +65,15 @@ IMPLEMENT_CLIENTCLASS_DT( C_ObjectSentrygun, DT_ObjectSentrygun, CObjectSentrygu
 	RecvPropInt( RECVINFO( m_iState ) ),
 	RecvPropVector( RECVINFO( m_vecEnd ) ),
 	RecvPropDataTable( "SentrygunLocalData", 0, 0, &REFERENCE_RECV_TABLE( DT_SentrygunLocalData ) ),
+	RecvPropInt(RECVINFO(m_iAmmoMetal)),
+	//RecvPropBool(RECVINFO(m_bStealthed)),
+	RecvPropArray2(
+		RecvProxyArrayLength_SHealingArray,
+		RecvPropInt("healing_array_element", 0, SIZEOF_IGNORE, 0, RecvProxy_SHealingList),
+		MAX_PLAYERS,
+		0,
+		"healing_array"
+	)
 END_RECV_TABLE()
 
 //-----------------------------------------------------------------------------
@@ -49,6 +83,10 @@ C_ObjectSentrygun::C_ObjectSentrygun() :
 	m_iv_vecEnd( "C_ObjectSentrygun::m_iv_vecEnd" )
 {
 	m_pDamageEffects = NULL;
+
+	m_bUpdateHealingTargets = false;
+	m_bPlayingSound = false;
+
 	m_pLaserBeam = NULL;
 	m_iOldUpgradeLevel = 0;
 	m_iMaxAmmoShells = SENTRYGUN_MAX_SHELLS_1;
@@ -64,6 +102,8 @@ C_ObjectSentrygun::~C_ObjectSentrygun()
 		DestroyShield();
 	if ( m_pSiren )
 		DestroySiren();
+
+	StopSound("Building_Dispenser.Heal");
 }
 
 void C_ObjectSentrygun::GetAmmoCount( int &iShells, int &iMaxShells, int &iRockets, int & iMaxRockets )
@@ -143,6 +183,12 @@ void C_ObjectSentrygun::OnDataChanged( DataUpdateType_t updateType )
 	if ( IsPlacing() && m_iOldBodygroups != GetBody() )
 	{
 		m_nBody = m_iOldBodygroups;
+	}
+
+	if (m_bUpdateHealingTargets)
+	{
+		UpdateDispenseEffects();
+		m_bUpdateHealingTargets = false;
 	}
 }
 
@@ -628,6 +674,7 @@ void C_ObjectSentrygun::OnGoActive( void )
 void C_ObjectSentrygun::OnGoInactive( void )
 {
 	DestroySiren();
+
 	BaseClass::OnGoInactive();
 }
 
@@ -665,4 +712,119 @@ void C_ObjectSentrygun::DestroySiren( void )
 void C_ObjectSentrygun::UpdateOnRemove( void )
 {
 	BaseClass::UpdateOnRemove();
+}
+
+void C_ObjectSentrygun::UpdateDispenseEffects(void)
+{
+	// Find all the targets we've stopped healing
+	bool bStillHealing[MAX_DISPENSER_HEALING_TARGETS];
+	for (int i = 0; i < m_hHealingTargetEffects.Count(); i++)
+	{
+		bStillHealing[i] = false;
+
+		// Are we still healing this target?
+		for (int target = 0; target < m_hHealingTargets.Count(); target++)
+		{
+			if (m_hHealingTargets[target] && m_hHealingTargets[target] == m_hHealingTargetEffects[i].pTarget)
+			{
+				bStillHealing[i] = true;
+				break;
+			}
+		}
+	}
+
+	// Now remove all the dead effects
+	for (int i = m_hHealingTargetEffects.Count() - 1; i >= 0; i--)
+	{
+		if (!bStillHealing[i])
+		{
+			ParticleProp()->StopEmission(m_hHealingTargetEffects[i].pEffect);
+			m_hHealingTargetEffects.Remove(i);
+		}
+	}
+
+	// Now add any new targets
+	for (int i = 0; i < m_hHealingTargets.Count(); i++)
+	{
+		C_BaseEntity* pTarget = m_hHealingTargets[i].Get();
+		C_TFPlayer* pPlayer = ToTFPlayer(pTarget);
+
+		// Loops through the healing targets, and make sure we have an effect for each of them
+		if (pTarget)
+		{
+			bool bHaveEffect = false;
+			for (int targets = 0; targets < m_hHealingTargetEffects.Count(); targets++)
+			{
+				if (m_hHealingTargetEffects[targets].pTarget == pTarget)
+				{
+					bHaveEffect = true;
+					break;
+				}
+			}
+
+			if (bHaveEffect)
+			{
+				if ((pPlayer->m_Shared.IsStealthed() || pPlayer->m_Shared.InCond(TF_COND_STEALTHED_BLINK))
+					&& !pPlayer->InLocalTeam())
+				{
+					ParticleProp()->StopEmission(m_hHealingTargetEffects[i].pEffect);
+					m_hHealingTargetEffects.Remove(i);
+					if (m_hHealingTargets.Count() == 1)
+						StopSound("Building_Dispenser.Heal");
+				}
+
+				continue;
+			}
+
+			if ((pPlayer->m_Shared.IsStealthed() || pPlayer->m_Shared.InCond(TF_COND_STEALTHED_BLINK))
+				&& !pPlayer->InLocalTeam())
+			{
+				continue;
+			}
+
+
+
+			const char* pszEffectName = ConstructTeamParticle("dispenser_heal_%s", GetTeamNumber());
+			CNewParticleEffect* pEffect = NULL;
+
+			if (GetObjectFlags() & OF_DOESNT_HAVE_A_MODEL)
+			{
+				if (GetObjectFlags() & OF_PLAYER_DESTRUCTION)
+				{
+					pEffect = ParticleProp()->Create(pszEffectName, PATTACH_ABSORIGIN_FOLLOW, NULL, Vector(0, 0, 50));
+				}
+				else
+				{
+					pEffect = ParticleProp()->Create(pszEffectName, PATTACH_ABSORIGIN_FOLLOW);
+				}
+			}
+			else
+			{
+				pEffect = ParticleProp()->Create(pszEffectName, PATTACH_ABSORIGIN_FOLLOW);//pEffect = ParticleProp()->Create(pszEffectName, PATTACH_POINT_FOLLOW, "heal_origin");
+			}
+
+			ParticleProp()->AddControlPoint(pEffect, 1, pTarget, PATTACH_ABSORIGIN_FOLLOW, NULL, Vector(0, 0, 50));
+
+			int iIndex = m_hHealingTargetEffects.AddToTail();
+			m_hHealingTargetEffects[iIndex].pTarget = pTarget;
+			m_hHealingTargetEffects[iIndex].pEffect = pEffect;
+
+			// Start the sound over again every time we start a new beam
+			StopSound("Building_Dispenser.Heal");
+
+			CLocalPlayerFilter filter;
+			EmitSound(filter, entindex(), "Building_Dispenser.Heal");
+
+			m_bPlayingSound = true;
+		}
+	}
+
+	// Stop the sound if we're not healing anyone
+	if (m_bPlayingSound && m_hHealingTargets.Count() == 0)
+	{
+		m_bPlayingSound = false;
+
+		// stop the sound
+		StopSound("Building_Dispenser.Heal");
+	}
 }

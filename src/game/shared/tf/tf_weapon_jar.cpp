@@ -252,3 +252,28 @@ PRECACHE_WEAPON_REGISTER( tf_weapon_jar_gas );
 BEGIN_DATADESC( CTFJarGas )
 END_DATADESC()
 #endif
+
+//=============================================================================
+//
+// Weapon JarGas
+//
+
+IMPLEMENT_NETWORKCLASS_ALIASED( TFJarGrenade, DT_WeaponJarGrenade)
+
+BEGIN_NETWORK_TABLE(CTFJar, DT_WeaponJarGrenade)
+#ifdef CLIENT_DLL
+#else
+#endif
+END_NETWORK_TABLE()
+
+BEGIN_PREDICTION_DATA(CTFJarGrenade)
+END_PREDICTION_DATA()
+
+LINK_ENTITY_TO_CLASS(tf_weapon_handgrenade, CTFJarGrenade);
+PRECACHE_WEAPON_REGISTER(tf_weapon_handgrenade);
+
+// Server specific.
+#ifndef CLIENT_DLL
+BEGIN_DATADESC(CTFJarGrenade)
+END_DATADESC()
+#endif

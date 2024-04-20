@@ -60,6 +60,8 @@ public:
 	virtual void	ItemPostFrame( void );
 	virtual void	PrimaryAttack();
 	virtual void	SecondaryAttack();
+	void			AirBlastAttack();
+	void			FlameAttack(bool bice);
 
 	virtual bool	Lower( void );
 	virtual void	WeaponReset( void );

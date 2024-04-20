@@ -21,6 +21,7 @@
 #define CTFProjectile_JarMilk C_TFProjectile_JarMilk
 #define CTFProjectile_Cleaver C_TFProjectile_Cleaver
 #define CTFProjectile_JarGas C_TFProjectile_JarGas
+#define CTFProjectile_JarGrenade C_TFProjectile_JarGrenade
 #endif
 
 #ifdef GAME_DLL
@@ -132,6 +133,7 @@ public:
 	virtual int	GetWeaponID( void ) const 			{ return TF_WEAPON_GRENADE_CLEAVER; }
 
 #ifdef GAME_DLL
+
 	static CTFProjectile_Cleaver	*Create( CBaseEntity *pWeapon, const Vector &vecOrigin, const QAngle &vecAngles, const Vector &vecVelocity, CBaseCombatCharacter *pOwner, CBaseEntity *pScorer, const AngularImpulse &angVelocity, const CTFWeaponInfo &weaponInfo );
 
 	virtual void	Precache( void );
@@ -168,6 +170,39 @@ class C_TFProjectile_JarGas : public C_TFProjectile_Jar
 	virtual void	Precache( void );
 
 	virtual int		GetEffectCondition( void ) { return TF_COND_GAS; }
+#endif
+};
+
+// Grenade frag Projectile.
+
+#ifdef GAME_DLL
+class CTFProjectile_JarGrenade : public CTFProjectile_Jar
+#else
+class CTFProjectile_JarGrenade : public C_TFProjectile_Jar
+#endif
+{
+public:
+	DECLARE_CLASS(CTFProjectile_JarGrenade, CTFProjectile_Jar);
+	DECLARE_NETWORKCLASS();
+#ifdef GAME_DLL
+	DECLARE_DATADESC();
+#endif
+
+	virtual int	GetWeaponID(void) const { return TF_WEAPON_JAR_FRAG; }
+
+#ifdef GAME_DLL
+	virtual void	Spawn(void);
+	virtual void	VPhysicsCollision(int index, gamevcollisionevent_t* pEvent);
+
+
+	void			JarTouch(CBaseEntity* pOther);
+	static CTFProjectile_JarGrenade* Create(CBaseEntity* pWeapon, const Vector& vecOrigin, const QAngle& vecAngles, const Vector& vecVelocity, CBaseCombatCharacter* pOwner, CBaseEntity* pScorer, const AngularImpulse& angVelocity, const CTFWeaponInfo& weaponInfo);
+
+	virtual void	Precache(void);
+
+	virtual void	Explode(trace_t* pTrace, int bitsDamageType);
+
+	virtual int		GetEffectCondition(void) { return NULL; }
 #endif
 };
 

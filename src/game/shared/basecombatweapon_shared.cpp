@@ -273,6 +273,12 @@ void CBaseCombatWeapon::Precache( void )
 			{
 				m_iPrimaryAmmoType = (int)TF_AMMO_METAL;
 			}
+			int iModUseSecondaryOverride = 0;
+			CALL_ATTRIB_HOOK_INT(iModUseMetalOverride, mod_use_secondary_ammo_type);
+			if (iModUseSecondaryOverride)
+			{
+				m_iPrimaryAmmoType = (int)TF_AMMO_SECONDARY;
+			}
 #endif
  		}
 		if ( GetWpnData().szAmmo2[0] )

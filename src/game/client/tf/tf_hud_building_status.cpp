@@ -1042,9 +1042,9 @@ CHudBuildingStatusContainer_Engineer::CHudBuildingStatusContainer_Engineer( cons
 	BaseClass( "BuildingStatus_Engineer" )
 {
 	AddBuildingPanel( OBJ_SENTRYGUN, OBJECT_MODE_NONE );
-	AddBuildingPanel( OBJ_DISPENSER, OBJECT_MODE_NONE );
-	AddBuildingPanel( OBJ_TELEPORTER, TELEPORTER_TYPE_ENTRANCE );
-	AddBuildingPanel( OBJ_TELEPORTER, TELEPORTER_TYPE_EXIT );
+	//AddBuildingPanel( OBJ_DISPENSER, OBJECT_MODE_NONE );
+	//AddBuildingPanel( OBJ_TELEPORTER, TELEPORTER_TYPE_ENTRANCE );
+	//AddBuildingPanel( OBJ_TELEPORTER, TELEPORTER_TYPE_EXIT );
 }
 
 //-----------------------------------------------------------------------------

@@ -9,8 +9,8 @@ PlayerClass
 	"model_hwm"		"models/player/hwm/demo.mdl"
 	"model_hands"		"models/weapons/c_models/c_demo_arms.mdl"
 	"localize_name"		"TF_Class_Name_Demoman"
-	"speed_max"		"280"
-	"health_max"		"175"
+	"speed_max"		"263"
+	"health_max"		"200"
 	"armor_max"		"0"
 
 	// Grenades.
@@ -18,10 +18,10 @@ PlayerClass
 	"grenade2"		"TF_WEAPON_GRENADE_MIRV_DEMOMAN"
 
 	// Weapons.
-	"weapon1"		"TF_WEAPON_GRENADELAUNCHER"
-	"weapon2"		"TF_WEAPON_PIPEBOMBLAUNCHER"
+	"weapon1"		"TF_WEAPON_SMG"
+	"weapon2"		"TF_WEAPON_PISTOL"
 	"weapon3"		"TF_WEAPON_BOTTLE"
-	"weapon4"		""
+	"weapon4"		"TF_WEAPON_JAR_FRAG"
 	"weapon5"		""
 	"weapon6"		""
 	"weapon7"		""
@@ -40,10 +40,10 @@ PlayerClass
 	AmmoMax
 	{
 		"tf_ammo_primary"	"16"
-		"tf_ammo_secondary"	"24"
+		"tf_ammo_secondary"	"90"
 		"tf_ammo_metal"		"200"
 		"tf_ammo_grenades1"	"1"
-		"tf_ammo_grenades2"	"1"
+		"tf_ammo_grenades2"	"21"
 	}
 
 	// Death Sounds

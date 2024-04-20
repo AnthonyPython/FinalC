@@ -68,7 +68,7 @@
 #endif
 ConVar tf2v_force_flame_visual( "tf2v_force_flame_visual", "2", FCVAR_REPLICATED, "Forces clients to use the new or old flame effect. Set to 2 to disable.", true, 0.0f, true, 2.0f );
 
-ConVar tf2v_airblast( "tf2v_airblast", "1", FCVAR_REPLICATED|FCVAR_NOTIFY, "Enable/Disable the Airblast function of the Flamethrower. 0 = off, 1 = Pre-JI, 2 = Post-JI" );
+ConVar tf2v_airblast( "tf2v_airblast", "0", FCVAR_REPLICATED|FCVAR_NOTIFY, "Enable/Disable the Airblast function of the Flamethrower. 0 = off, 1 = Pre-JI, 2 = Post-JI" );
 ConVar tf2v_airblast_players( "tf2v_airblast_players", "1", FCVAR_REPLICATED, "Enable/Disable the Airblast pushing players." );
 
 ConVar tf2v_use_extinguish_heal( "tf2v_use_extinguish_heal", "0", FCVAR_REPLICATED, "Enables 20HP healing for airblast extinguishing a teammate." );
@@ -77,7 +77,11 @@ ConVar tf2v_use_extinguish_heal( "tf2v_use_extinguish_heal", "0", FCVAR_REPLICAT
 	ConVar tf2v_debug_airblast( "tf2v_debug_airblast", "0", FCVAR_CHEAT, "Visualize airblast box." );
 	ConVar tf2v_use_new_phlog_taunt( "tf2v_use_new_phlog_taunt", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "Changes behavior when activating Mmmph.", true, 0, true, 2 );
 
+	
+
 #endif
+
+	ConVar fc_icestream("fc_icestream", "1", FCVAR_REPLICATED | FCVAR_NOTIFY, "Enable/Disable the IceStream function of the Flamethrower. 0 = off, 1 = on");
 
 IMPLEMENT_NETWORKCLASS_ALIASED( TFFlameThrower, DT_WeaponFlameThrower )
 
@@ -269,12 +273,12 @@ void CTFFlameThrower::ItemPostFrame()
 	int iAmmo = pOwner->GetAmmoCount( m_iPrimaryAmmoType );
 	bool bFired = false;
 
-	if ( ( pOwner->m_nButtons & IN_ATTACK2 ) && m_flNextSecondaryAttack <= gpGlobals->curtime )
+	if ( ( pOwner->m_nButtons & IN_ATTACK2 ) /* && m_flNextSecondaryAttack <= gpGlobals->curtime*/)
 	{
 		float flAmmoPerSecondaryAttack = TF_FLAMETHROWER_AMMO_PER_SECONDARY_ATTACK;
 		CALL_ATTRIB_HOOK_FLOAT( flAmmoPerSecondaryAttack, mult_airblast_cost );
 
-		if ( iAmmo >= flAmmoPerSecondaryAttack && CanAirBlast() )
+		if ( ( iAmmo >= flAmmoPerSecondaryAttack && CanAirBlast() ) || fc_icestream.GetBool() )
 		{
 			SecondaryAttack();
 			bFired = true;
@@ -333,20 +337,36 @@ public:
 //-----------------------------------------------------------------------------
 void CTFFlameThrower::PrimaryAttack()
 {
-	// Are we capable of firing again?
-	if ( m_flNextPrimaryAttack > gpGlobals->curtime )
-		return;
+	FlameAttack(false);
+}
+
+void CTFFlameThrower::FlameAttack(bool bice)
+{
+	if (!bice)
+	{
+		// Are we capable of firing again?
+		if (m_flNextPrimaryAttack > gpGlobals->curtime)
+			return;
+	}
+	
+
+	if (bice)
+	{
+		// Are we capable of firing again?
+		if (m_flNextSecondaryAttack > gpGlobals->curtime)
+			return;
+	}
 
 	// Get the player owning the weapon.
-	CTFPlayer *pOwner = ToTFPlayer( GetPlayerOwner() );
-	if ( !pOwner )
+	CTFPlayer* pOwner = ToTFPlayer(GetPlayerOwner());
+	if (!pOwner)
 		return;
 
-	if ( !CanAttack() )
+	if (!CanAttack())
 	{
-	#if defined ( CLIENT_DLL )
+#if defined ( CLIENT_DLL )
 		StopFlame();
-	#endif
+#endif
 		m_iWeaponState = FT_STATE_IDLE;
 		return;
 	}
@@ -359,75 +379,75 @@ void CTFFlameThrower::PrimaryAttack()
 	trace_t trace;
 	Vector vecEye = pOwner->EyePosition();
 	Vector vecMuzzlePos = GetVisualMuzzlePos();
-	CTraceFilterIgnoreObjects traceFilter( this, COLLISION_GROUP_NONE );
-	UTIL_TraceLine( vecEye, vecMuzzlePos, MASK_SOLID, &traceFilter, &trace );
-	if ( trace.fraction < 1.0 && ( !trace.m_pEnt || trace.m_pEnt->m_takedamage == DAMAGE_NO ) )
+	CTraceFilterIgnoreObjects traceFilter(this, COLLISION_GROUP_NONE);
+	UTIL_TraceLine(vecEye, vecMuzzlePos, MASK_SOLID, &traceFilter, &trace);
+	if (trace.fraction < 1.0 && (!trace.m_pEnt || trace.m_pEnt->m_takedamage == DAMAGE_NO))
 	{
 		// there is something between the eye and the end of the muzzle, most likely a wall, don't fire, and stop firing if we already are
-		if ( m_iWeaponState > FT_STATE_IDLE )
+		if (m_iWeaponState > FT_STATE_IDLE)
 		{
-		#if defined ( CLIENT_DLL )
+#if defined ( CLIENT_DLL )
 			StopFlame();
-		#endif
+#endif
 			m_iWeaponState = FT_STATE_IDLE;
 		}
 		return;
 	}
 
-	switch ( m_iWeaponState )
+	switch (m_iWeaponState)
 	{
-		case FT_STATE_IDLE:
-		case FT_STATE_AIRBLASTING:
+	case FT_STATE_IDLE:
+	case FT_STATE_AIRBLASTING:
+	{
+		// Just started, play PRE and start looping view model anim
+
+		pOwner->DoAnimationEvent(PLAYERANIMEVENT_ATTACK_PRE);
+
+		SendWeaponAnim(ACT_VM_PRIMARYATTACK);
+
+		m_flStartFiringTime = gpGlobals->curtime + 0.16;	// 5 frames at 30 fps
+
+		m_iWeaponState = FT_STATE_STARTFIRING;
+	}
+	break;
+	case FT_STATE_STARTFIRING:
+	{
+		// if some time has elapsed, start playing the looping third person anim
+		if (gpGlobals->curtime > m_flStartFiringTime)
 		{
-			// Just started, play PRE and start looping view model anim
-
-			pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRE );
-
-			SendWeaponAnim( ACT_VM_PRIMARYATTACK );
-
-			m_flStartFiringTime = gpGlobals->curtime + 0.16;	// 5 frames at 30 fps
-
-			m_iWeaponState = FT_STATE_STARTFIRING;
+			m_iWeaponState = FT_STATE_FIRING;
+			m_flNextPrimaryAttackAnim = gpGlobals->curtime;
 		}
-		break;
-		case FT_STATE_STARTFIRING:
+	}
+	break;
+	case FT_STATE_FIRING:
+	{
+		if (gpGlobals->curtime >= m_flNextPrimaryAttackAnim)
 		{
-			// if some time has elapsed, start playing the looping third person anim
-			if ( gpGlobals->curtime > m_flStartFiringTime )
-			{
-				m_iWeaponState = FT_STATE_FIRING;
-				m_flNextPrimaryAttackAnim = gpGlobals->curtime;
-			}
+			pOwner->DoAnimationEvent(PLAYERANIMEVENT_ATTACK_PRIMARY);
+			m_flNextPrimaryAttackAnim = gpGlobals->curtime + 1.4;		// fewer than 45 frames!
 		}
-		break;
-		case FT_STATE_FIRING:
-		{
-			if ( gpGlobals->curtime >= m_flNextPrimaryAttackAnim )
-			{
-				pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
-				m_flNextPrimaryAttackAnim = gpGlobals->curtime + 1.4;		// fewer than 45 frames!
-			}
-		}
-		break;
+	}
+	break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 #ifdef CLIENT_DLL
 	// Restart our particle effect if we've transitioned across water boundaries
-	if ( m_iParticleWaterLevel != -1 && pOwner->GetWaterLevel() != m_iParticleWaterLevel )
+	if (m_iParticleWaterLevel != -1 && pOwner->GetWaterLevel() != m_iParticleWaterLevel)
 	{
-		if ( m_iParticleWaterLevel == WL_Eyes || pOwner->GetWaterLevel() == WL_Eyes )
+		if (m_iParticleWaterLevel == WL_Eyes || pOwner->GetWaterLevel() == WL_Eyes)
 		{
 			RestartParticleEffect();
 		}
 	}
 
 	// Handle the flamethrower light
-	if ( tf2v_muzzlelight.GetBool() )
+	if (tf2v_muzzlelight.GetBool())
 	{
-		dlight_t *dl = effects->CL_AllocDlight( LIGHT_INDEX_MUZZLEFLASH + index );
+		dlight_t* dl = effects->CL_AllocDlight(LIGHT_INDEX_MUZZLEFLASH + index);
 		dl->origin = vecMuzzlePos;
 		dl->color.r = 255;
 		dl->color.g = 100;
@@ -444,57 +464,66 @@ void CTFFlameThrower::PrimaryAttack()
 	pOwner->NoteWeaponFired();
 
 	pOwner->SpeakWeaponFire();
-	CTF_GameStats.Event_PlayerFiredWeapon( pOwner, m_bCritFire );
+	CTF_GameStats.Event_PlayerFiredWeapon(pOwner, m_bCritFire);
 
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
+	lagcompensation->StartLagCompensation(pOwner, pOwner->GetCurrentCommand());
 #endif
 
-	float flFiringInterval = m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay;
+	float flFiringInterval = m_pWeaponInfo->GetWeaponData(m_iWeaponMode).m_flTimeFireDelay;
 
 	// Don't attack if we're underwater
-	if ( pOwner->GetWaterLevel() != WL_Eyes )
+	if (pOwner->GetWaterLevel() != WL_Eyes)
 	{
 		// Find eligible entities in a cone in front of us.
 		Vector vOrigin = pOwner->Weapon_ShootPosition();
 		Vector vForward, vRight, vUp;
 		QAngle vAngles = pOwner->EyeAngles() + pOwner->GetPunchAngle();
-		AngleVectors( vAngles, &vForward, &vRight, &vUp );
+		AngleVectors(vAngles, &vForward, &vRight, &vUp);
 
-	#ifdef CLIENT_DLL
+#ifdef CLIENT_DLL
 		bool bWasCritical = m_bCritFire;
-	#endif
+#endif
 
 		// Burn & Ignite 'em
-		int iDmgType = g_aWeaponDamageTypes[ GetWeaponID() ];
+		int iDmgType;
+
+		if (bice)
+			iDmgType = DMG_PARALYZE;
+		else
+			iDmgType = g_aWeaponDamageTypes[GetWeaponID()];
+
 		m_bCritFire = IsCurrentAttackACrit();
 
-		if ( m_bCritFire )
+		if (m_bCritFire)
 		{
 			iDmgType |= DMG_CRITICAL;
 		}
-		else if ( IsCurrentAttackAMiniCrit() )
+		else if (IsCurrentAttackAMiniCrit())
 		{
 			iDmgType |= DMG_MINICRITICAL;
 		}
 
-	#ifdef CLIENT_DLL
-		if ( bWasCritical != m_bCritFire )
+#ifdef CLIENT_DLL
+		if (bWasCritical != m_bCritFire)
 		{
 			RestartParticleEffect();
 		}
-	#endif
+#endif
 
 
-	#ifdef GAME_DLL
+#ifdef GAME_DLL
 		// create the flame entity
-		int iDamagePerSec = m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_nDamage;
+		int iDamagePerSec = m_pWeaponInfo->GetWeaponData(m_iWeaponMode).m_nDamage;
+		// Ice stream never does damage normally
+		if (bice)
+			iDamagePerSec = 0.0f;
 		float flDamage = (float)iDamagePerSec * flFiringInterval;
-		CALL_ATTRIB_HOOK_FLOAT( flDamage, mult_dmg );
+		CALL_ATTRIB_HOOK_FLOAT(flDamage, mult_dmg);
 		int nCritFromBehind = 0;
-		CALL_ATTRIB_HOOK_INT( nCritFromBehind, set_flamethrower_back_crit );
-		CTFFlameEntity::Create( GetFlameOriginPos(), pOwner->EyeAngles(), this, iDmgType, flDamage, nCritFromBehind == 1 );
-	#endif
+		CALL_ATTRIB_HOOK_INT(nCritFromBehind, set_flamethrower_back_crit);
+		CTFFlameEntity::Create(GetFlameOriginPos(), pOwner->EyeAngles(), this, iDmgType, flDamage, nCritFromBehind == 1);
+#endif
 	}
 
 #ifdef GAME_DLL
@@ -504,56 +533,52 @@ void CTFFlameThrower::PrimaryAttack()
 	// and cause ammo pickup indicators to appear
 
 	float flAmmoPerSecond = TF_FLAMETHROWER_AMMO_PER_SECOND_PRIMARY_ATTACK;
-	CALL_ATTRIB_HOOK_FLOAT( flAmmoPerSecond, mult_flame_ammopersec );
+	CALL_ATTRIB_HOOK_FLOAT(flAmmoPerSecond, mult_flame_ammopersec);
 
 	m_flAmmoUseRemainder += flAmmoPerSecond * flFiringInterval;
 	// take the integer portion of the ammo use accumulator and subtract it from player's ammo count; any fractional amount of ammo use
 	// remains and will get used in the next shot
 	int iAmmoToSubtract = (int)m_flAmmoUseRemainder;
-	if ( iAmmoToSubtract > 0 )
+	if (iAmmoToSubtract > 0)
 	{
-		if ( !BaseClass::IsEnergyWeapon() )
-			pOwner->RemoveAmmo( iAmmoToSubtract, m_iPrimaryAmmoType );
+		if (!BaseClass::IsEnergyWeapon() )
+			if (bice == false)
+			{
+				pOwner->RemoveAmmo(iAmmoToSubtract, m_iPrimaryAmmoType);
+			}
 		m_flAmmoUseRemainder -= iAmmoToSubtract;
 		// round to 2 digits of precision
-		m_flAmmoUseRemainder = (float)( (int)( m_flAmmoUseRemainder * 100 ) ) / 100.0f;
+		m_flAmmoUseRemainder = (float)((int)(m_flAmmoUseRemainder * 100)) / 100.0f;
 	}
 #endif
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + flFiringInterval;
+	if (!bice)
+	{
+		m_flNextPrimaryAttack = gpGlobals->curtime + flFiringInterval;
+	}
+	else
+	{
+		m_flNextSecondaryAttack = gpGlobals->curtime + flFiringInterval;
+	}
+	
 	m_flTimeWeaponIdle = gpGlobals->curtime + flFiringInterval;
 
 #if !defined (CLIENT_DLL)
-	lagcompensation->FinishLagCompensation( pOwner );
+	lagcompensation->FinishLagCompensation(pOwner);
 #endif
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CTFFlameThrower::SecondaryAttack()
+void CTFFlameThrower::AirBlastAttack()
 {
 
-	// Are we capable of firing again?
-	if ( m_flNextSecondaryAttack > gpGlobals->curtime )
+	if (tf2v_airblast.GetInt() != 1 && tf2v_airblast.GetInt() != 2)
 		return;
-	
-	// Can we use our Mmmph?
-	if (HasMmmph())
-	{
-		ActivateMmmph();
-		return;
-	}
-	
-	if ( tf2v_airblast.GetInt() != 1 && tf2v_airblast.GetInt() != 2 )
-		return;
-
 	// Get the player owning the weapon.
-	CTFPlayer *pOwner = ToTFPlayer( GetPlayerOwner() );
-	if ( !pOwner )
+	CTFPlayer* pOwner = ToTFPlayer(GetPlayerOwner());
+	if (!pOwner)
 		return;
 
-	if ( !CanAttack() || !CanAirBlast() )
+	if (!CanAttack() || !CanAirBlast())
 	{
 		m_iWeaponState = FT_STATE_IDLE;
 		return;
@@ -564,11 +589,11 @@ void CTFFlameThrower::SecondaryAttack()
 #endif
 
 	m_iWeaponState = FT_STATE_AIRBLASTING;
-	SendWeaponAnim( ACT_VM_SECONDARYATTACK );
-	WeaponSound( WPN_DOUBLE );
+	SendWeaponAnim(ACT_VM_SECONDARYATTACK);
+	WeaponSound(WPN_DOUBLE);
 
 #ifdef CLIENT_DLL
-	if ( prediction->IsFirstTimePredicted() )
+	if (prediction->IsFirstTimePredicted())
 	{
 		StartFlame();
 	}
@@ -577,88 +602,122 @@ void CTFFlameThrower::SecondaryAttack()
 	pOwner->NoteWeaponFired();
 
 	pOwner->SpeakWeaponFire();
-	CTF_GameStats.Event_PlayerFiredWeapon( pOwner, false );
+	CTF_GameStats.Event_PlayerFiredWeapon(pOwner, false);
 
 	// Move other players back to history positions based on local player's lag
-	lagcompensation->StartLagCompensation( pOwner, pOwner->GetCurrentCommand() );
+	lagcompensation->StartLagCompensation(pOwner, pOwner->GetCurrentCommand());
 
 	Vector vecDir;
 	QAngle angDir = pOwner->EyeAngles();
-	AngleVectors( angDir, &vecDir );
+	AngleVectors(angDir, &vecDir);
 
-	const Vector vecBlastSize = Vector( 128, 128, 64 );
+	const Vector vecBlastSize = Vector(128, 128, 64);
 
 	// Picking max out of length, width, height for airblast distance.
-	float flBlastDist = Max( Max( vecBlastSize.x, vecBlastSize.y ), vecBlastSize.z );
+	float flBlastDist = Max(Max(vecBlastSize.x, vecBlastSize.y), vecBlastSize.z);
 
 	Vector vecOrigin = pOwner->Weapon_ShootPosition() + vecDir * flBlastDist;
 
-	CBaseEntity *pList[64];
+	CBaseEntity* pList[64];
 
-	int count = UTIL_EntitiesInBox( pList, 64, vecOrigin - vecBlastSize, vecOrigin + vecBlastSize, 0 );
+	int count = UTIL_EntitiesInBox(pList, 64, vecOrigin - vecBlastSize, vecOrigin + vecBlastSize, 0);
 
-	if ( tf2v_debug_airblast.GetBool() )
+	if (tf2v_debug_airblast.GetBool())
 	{
-		NDebugOverlay::Box( vecOrigin, -vecBlastSize, vecBlastSize, 0, 0, 255, 100, 2.0 );
+		NDebugOverlay::Box(vecOrigin, -vecBlastSize, vecBlastSize, 0, 0, 255, 100, 2.0);
 	}
 
-	for ( int i = 0; i < count; i++ )
+	for (int i = 0; i < count; i++)
 	{
-		CBaseEntity *pEntity = pList[i];
+		CBaseEntity* pEntity = pList[i];
 
-		if ( !pEntity )
+		if (!pEntity)
 			continue;
 
-		if ( pEntity == pOwner )
+		if (pEntity == pOwner)
 			continue;
 
-		if ( !pEntity->IsDeflectable() )
+		if (!pEntity->IsDeflectable())
 			continue;
 
 		// Make sure we can actually see this entity so we don't hit anything through walls.
 		trace_t tr;
-		UTIL_TraceLine( pOwner->Weapon_ShootPosition(), pEntity->WorldSpaceCenter(), MASK_SOLID, this, COLLISION_GROUP_DEBRIS, &tr );
-		if ( tr.fraction != 1.0f )
+		UTIL_TraceLine(pOwner->Weapon_ShootPosition(), pEntity->WorldSpaceCenter(), MASK_SOLID, this, COLLISION_GROUP_DEBRIS, &tr);
+		if (tr.fraction != 1.0f)
 			continue;
 
 
-		if ( pEntity->IsPlayer() && pEntity->IsAlive() )
+		if (pEntity->IsPlayer() && pEntity->IsAlive())
 		{
-			CTFPlayer *pTFPlayer = ToTFPlayer( pEntity );
+			CTFPlayer* pTFPlayer = ToTFPlayer(pEntity);
 
 			Vector vecPushDir;
 			QAngle angPushDir = angDir;
 
 			// assume that shooter is looking at least 45 degrees up.
-			if ( tf2v_airblast.GetInt() > 0 )
-				angPushDir[PITCH] = Min( -45.f, angPushDir[PITCH] );
+			if (tf2v_airblast.GetInt() > 0)
+				angPushDir[PITCH] = Min(-45.f, angPushDir[PITCH]);
 
-			AngleVectors( angPushDir, &vecPushDir );
+			AngleVectors(angPushDir, &vecPushDir);
 
-			DeflectPlayer( pTFPlayer, pOwner, vecPushDir );
+			DeflectPlayer(pTFPlayer, pOwner, vecPushDir);
 		}
 		else
 		{
 			// Deflect projectile to the point that we're aiming at, similar to rockets.
 			Vector vecPos = pEntity->GetAbsOrigin();
 			Vector vecDeflect;
-			GetProjectileReflectSetup( GetTFPlayerOwner(), vecPos, &vecDeflect, false );
+			GetProjectileReflectSetup(GetTFPlayerOwner(), vecPos, &vecDeflect, false);
 
-			DeflectEntity( pEntity, pOwner, vecDeflect );
+			DeflectEntity(pEntity, pOwner, vecDeflect);
 		}
 	}
 
-	lagcompensation->FinishLagCompensation( pOwner );
+	lagcompensation->FinishLagCompensation(pOwner);
 #endif
 
 	float flAmmoPerSecondaryAttack = TF_FLAMETHROWER_AMMO_PER_SECONDARY_ATTACK;
-	CALL_ATTRIB_HOOK_FLOAT( flAmmoPerSecondaryAttack, mult_airblast_cost );
+	CALL_ATTRIB_HOOK_FLOAT(flAmmoPerSecondaryAttack, mult_airblast_cost);
 
-	if ( !BaseClass::IsEnergyWeapon() )
-		pOwner->RemoveAmmo( flAmmoPerSecondaryAttack, m_iPrimaryAmmoType );
+	if (!BaseClass::IsEnergyWeapon())
+		pOwner->RemoveAmmo(flAmmoPerSecondaryAttack, m_iPrimaryAmmoType);
 
 	// Don't allow firing immediately after airblasting.
 	m_flNextPrimaryAttack = m_flNextSecondaryAttack = gpGlobals->curtime + 0.75f;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CTFFlameThrower::SecondaryAttack()
+{
+
+
+	// Get the player owning the weapon.
+	CTFPlayer* pOwner = ToTFPlayer(GetPlayerOwner());
+	if (!pOwner)
+		return;
+	
+	// Can we use our Mmmph?
+	if (HasMmmph())
+	{
+		ActivateMmmph();
+		return;
+	}
+
+	
+
+
+	if (fc_icestream.GetBool())
+	{
+		FlameAttack(true);
+	}
+
+	AirBlastAttack();
+	
+
+
+	
 }
 
 #ifdef GAME_DLL
@@ -1757,7 +1816,12 @@ void CTFFlameEntity::OnCollide( CBaseEntity *pOther )
 		flMultiplier = RemapValClamped( flDistance, tf_flamethrower_maxdamagedist.GetFloat() / 2, tf_flamethrower_maxdamagedist.GetFloat(), 1.0, 0.6 );
 	}
 	float flDamage = m_flDmgAmount * flMultiplier;
-	flDamage = Max( flDamage, 1.0f );
+
+	if (flDamage > 0.0f)
+	{
+		flDamage = Max(flDamage, 1.0f);
+	}
+	
 	if ( tf_debug_flamethrower.GetInt() )
 	{
 		Msg( "Flame touch dmg: %.1f\n", flDamage );
@@ -1771,6 +1835,25 @@ void CTFFlameEntity::OnCollide( CBaseEntity *pOther )
 
 	if ( pOther->IsPlayer() && IsBehindTarget( pOther ) && m_bCritFromBehind )
 		m_iDmgType |= DMG_CRITICAL;
+
+
+	if (pOther->IsPlayer())
+	{
+		CTFPlayer* pPlayer = ToTFPlayer(pOther);
+		CTFPlayer* pTFAttacker = ToTFPlayer(pAttacker);
+		
+		if (pPlayer && flDamage == 0.0f)
+		{
+			pPlayer->m_Shared.StunPlayer(
+				0.2f,
+				(Clamp((pPlayer->GetAbsOrigin() - pAttacker->GetAbsOrigin()).LengthSqr() * 4e-7f, 0.0f, 1.0f) * -0.2f) + 0.6f,
+				0.0f,
+				TF_STUNFLAG_SLOWDOWN | TF_STUNFLAG_NOSOUNDOREFFECT,
+				pTFAttacker);
+		}
+		
+	}
+	
 
 	CTakeDamageInfo info( GetOwnerEntity(), pAttacker, GetOwnerEntity(), flDamage, m_iDmgType, TF_DMG_CUSTOM_BURNING );
 	info.SetReportedPosition( pAttacker->GetAbsOrigin() );

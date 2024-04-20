@@ -1286,6 +1286,9 @@ void C_TFRagdoll::ClientThink( void )
 {
 	SetNextClientThink( CLIENT_THINK_ALWAYS );
 
+	
+	
+
 	if ( IsDecapitation() )
 	{
 		m_bHeadTransform = true;
@@ -2573,6 +2576,12 @@ END_PREDICTION_DATA()
 C_TFPlayer::C_TFPlayer() :
 	m_iv_angEyeAngles( "C_TFPlayer::m_iv_angEyeAngles" )
 {
+
+	//Recoil 
+	m_flPitchRecoilAccumulator = 0.0;
+	m_flYawRecoilAccumulator = 0.0;
+	m_flRecoilTimeRemaining = 0.0;
+
 	m_pAttributes = this;
 
 	m_PlayerAnimState = CreateTFPlayerAnimState( this );
@@ -3871,6 +3880,27 @@ void C_TFPlayer::ClientThink()
 	UpdateIDTarget();
 	UpdatePlayerGlows();
 	UpdateLookAt();
+
+	if (IsLocalPlayer())
+	{
+		// Recoil
+		QAngle viewangles;
+		engine->GetViewAngles(viewangles);
+
+		float flYawRecoil;
+		float flPitchRecoil;
+		GetRecoilToAddThisFrame(flPitchRecoil, flYawRecoil);
+
+		// Recoil
+		if (flPitchRecoil > 0)
+		{
+			//add the recoil pitch
+			viewangles[PITCH] -= flPitchRecoil;
+			viewangles[YAW] += flYawRecoil;
+		}
+
+		engine->SetViewAngles(viewangles);
+	}
 
 	// Handle invisibility.
 	m_Shared.InvisibilityThink();
@@ -6532,7 +6562,70 @@ void C_TFPlayer::UpdateTypingBubble( void )
 	}
 }
 
+void C_TFPlayer::DoRecoil(int iWpnID, float flWpnRecoil)
+{
+	float flPitchRecoil = flWpnRecoil;
+	float flYawRecoil = flPitchRecoil / 4;
 
+	/*if (iWpnID == WEAPON_BAR)
+		flYawRecoil = min(flYawRecoil, 1.3);
+
+	if (m_Shared.IsInMGDeploy())
+	{
+		flPitchRecoil = 0.0;
+		flYawRecoil = 0.0;
+	}
+	else if (m_Shared.IsProne() &&
+		iWpnID != WEAPON_30CAL &&
+		iWpnID != WEAPON_MG42) //minor hackage
+	{
+		flPitchRecoil = flPitchRecoil / 4;
+		flYawRecoil = flYawRecoil / 4;
+	}
+	else if (m_Shared.IsDucking())
+	{
+		flPitchRecoil = flPitchRecoil / 2;
+		flYawRecoil = flYawRecoil / 2;
+	}*/
+
+	SetRecoilAmount(flPitchRecoil, flYawRecoil);
+}
+
+//Set the amount of pitch and yaw recoil we want to do over the next RECOIL_DURATION seconds
+void C_TFPlayer::SetRecoilAmount(float flPitchRecoil, float flYawRecoil)
+{
+	//Slam the values, abandon previous recoils
+	m_flPitchRecoilAccumulator = flPitchRecoil;
+
+	flYawRecoil = flYawRecoil * random->RandomFloat(0.8, 1.1);
+
+	if (random->RandomInt(0, 1) <= 0)
+		m_flYawRecoilAccumulator = flYawRecoil;
+	else
+		m_flYawRecoilAccumulator = -flYawRecoil;
+
+	m_flRecoilTimeRemaining = RECOIL_DURATION;
+}
+
+//Get the amount of recoil we should do this frame
+void C_TFPlayer::GetRecoilToAddThisFrame(float& flPitchRecoil, float& flYawRecoil)
+{
+	if (m_flRecoilTimeRemaining <= 0)
+	{
+		flPitchRecoil = 0.0;
+		flYawRecoil = 0.0;
+		return;
+	}
+
+	float flRemaining = min(m_flRecoilTimeRemaining, gpGlobals->frametime);
+
+	float flRecoilProportion = (flRemaining / RECOIL_DURATION);
+
+	flPitchRecoil = m_flPitchRecoilAccumulator * flRecoilProportion;
+	flYawRecoil = m_flYawRecoilAccumulator * flRecoilProportion;
+
+	m_flRecoilTimeRemaining -= gpGlobals->frametime;
+}
 
 #include "c_obj_sentrygun.h"
 

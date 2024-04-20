@@ -161,8 +161,8 @@ bool CTargetID::ShouldDraw( void )
 		m_flLastChangeTime = gpGlobals->curtime;
 	}
 	
-	int nSeeEnemyHealth = 0;
-	CALL_ATTRIB_HOOK_INT_ON_OTHER( pLocalTFPlayer, nSeeEnemyHealth, see_enemy_health );
+	int nSeeEnemyHealth = 1;
+	//CALL_ATTRIB_HOOK_INT_ON_OTHER( pLocalTFPlayer, nSeeEnemyHealth, see_enemy_health );
 
 	bool bReturn = false;
 	if ( m_iTargetEntIndex )
@@ -431,8 +431,8 @@ void CTargetID::UpdateID( void )
 				}
 			}
 				
-			int nSeeEnemyHealth = 0;
-			CALL_ATTRIB_HOOK_INT_ON_OTHER( pLocalTFPlayer, nSeeEnemyHealth, see_enemy_health );
+			int nSeeEnemyHealth = 1;
+			//CALL_ATTRIB_HOOK_INT_ON_OTHER( pLocalTFPlayer, nSeeEnemyHealth, see_enemy_health );
 			
 			if (pLocalTFPlayer->GetTeamNumber() == TEAM_SPECTATOR || pPlayer->InSameTeam(pLocalTFPlayer) || (bDisguisedEnemy && pPlayer->m_Shared.GetDisguiseTeam() == pLocalTFPlayer->GetTeamNumber()))
 			{

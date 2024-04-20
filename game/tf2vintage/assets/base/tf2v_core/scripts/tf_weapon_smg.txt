@@ -23,15 +23,16 @@ WeaponData
 	"BrassModel"		"models/weapons/shells/shell_pistol.mdl"
 	"UseRapidFireCrits"	"1"
 	"MaxAmmo"		"75"
+	"Recoil" 		"0.5"
 
 	// Ammo & Clip.
 	"primary_ammo"		"TF_AMMO_SECONDARY"
 	"secondary_ammo"	"None"
-	clip_size		25
-	default_clip		25
+	clip_size		30
+	default_clip		30
 
 	// Buckets.
-	"bucket"		"1"
+	"bucket"		"0"
 	"bucket_position"	"0"
 	"TracerEffect"		"bullet_pistol_tracer01"
 

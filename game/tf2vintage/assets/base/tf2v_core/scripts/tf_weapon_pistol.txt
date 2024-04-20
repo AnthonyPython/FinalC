@@ -26,7 +26,7 @@ WeaponData
 	"MaxAmmo"		"200"
 
 	// Ammo & Clip.
-	"primary_ammo"		"TF_AMMO_SECONDARY"
+	"primary_ammo"		"TF_AMMO_GRENADES2"
 	"secondary_ammo"	"None"
 	clip_size		12
 	default_clip		12

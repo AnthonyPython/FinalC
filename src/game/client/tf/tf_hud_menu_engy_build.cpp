@@ -459,26 +459,42 @@ void CHudMenuEngyBuild::OnTick( void )
 		// If the building is already built
 		if ( pObj != NULL && !pObj->IsPlacing() )
 		{
-			m_pAlreadyBuiltObjects[i]->SetVisible( true );
+			if (i == 0)
+			{
+				m_pAlreadyBuiltObjects[i]->SetVisible(true);
+			}
+			
 		}
 		// See if we can afford it
 		else if ( iAccount < iCost )
 		{
-			m_pCantAffordObjects[i]->SetVisible( true );
+
+			if (i == 0)
+			{
+				m_pCantAffordObjects[i]->SetVisible(true);
+			}
+			
 		}
 		else
 		{
-			// we can buy it
-			m_pAvailableObjects[i]->SetVisible( true );
+			if (i == 0)
+			{
+				// we can buy it
+				m_pAvailableObjects[i]->SetVisible(true);
+			}
+			
 		}
 
 		if ( iRemappedObjectID == OBJ_SENTRYGUN && m_bGunslinger != pLocalPlayer->HasGunslinger() )
 		{
 			m_bGunslinger = pLocalPlayer->HasGunslinger();
 
-			m_pAvailableObjects[i]->SetDialogVariable( "metal", iCost );
-			m_pAlreadyBuiltObjects[i]->SetDialogVariable( "metal", iCost );
-			m_pCantAffordObjects[i]->SetDialogVariable( "metal", iCost );
+			if (i == 0)
+			{
+				m_pAvailableObjects[i]->SetDialogVariable("metal", iCost);
+				m_pAlreadyBuiltObjects[i]->SetDialogVariable("metal", iCost);
+				m_pCantAffordObjects[i]->SetDialogVariable("metal", iCost);
+			}
 		}
 	}
 }

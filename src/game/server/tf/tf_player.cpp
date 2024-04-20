@@ -4114,7 +4114,7 @@ void CTFPlayer::HandleCommand_JoinClass( const char *pClassName )
 					// Don't let them be the same class twice in a row
 					iClass = random->RandomInt(TF_FIRST_NORMAL_CLASS, TF_LAST_NORMAL_CLASS);
 
-				} while (iClass == GetPlayerClass()->GetClassIndex());
+				} while ((iClass == GetPlayerClass()->GetClassIndex()) || (!TFGameRules()->CanPlayerChooseClass(this, iClass) ) );
 			}
 		}
 
@@ -5030,7 +5030,8 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 	CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, nCanUseHitLocations, use_hit_locations);
 
 
-	if (nCanUseHitLocations || (info_modified.GetDamageType() & DMG_USE_HITLOCATIONS))
+	//if (nCanUseHitLocations || (info_modified.GetDamageType() & DMG_USE_HITLOCATIONS))
+	if (true)
 	{
 		switch ( ptr->hitgroup )
 		{
@@ -5079,6 +5080,13 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 
 						CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pWpn, flDamage, headshot_damage_modify );
 
+						
+						if (!pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_DECAP) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_CLASSIC) || !pWpn->IsWeapon(TF_WEAPON_ROCKETLAUNCHER) || pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) || !pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER))
+						{
+							damageBits &= ~DMG_CRITICAL;
+							damageBits |= DMG_MINICRITICAL;
+						}
+
 						int nHeadshotDealsMinicrit = 0;
 						CALL_ATTRIB_HOOK_INT_ON_OTHER( pWpn, nHeadshotDealsMinicrit, headshots_become_minicrits );
 						if ( nHeadshotDealsMinicrit != 0 )
@@ -5118,9 +5126,9 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
 				if (pWpn)
 				{
-					float flBodyshotModifer = 1.0f;
+					float flBodyshotModifer = 1.2f;
 					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, stomachshot_damage_modify);
-					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					if (flBodyshotModifer != 1.2f) // We have an attribute changing damage, modify it.
 					{
 						float flDamage = info_modified.GetDamage();
 						flDamage *= flBodyshotModifer;
@@ -5169,9 +5177,9 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
 				if (pWpn)
 				{
-					float flBodyshotModifer = 1.0f;
+					float flBodyshotModifer = 0.90f;
 					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, leftlegshot_damage_modify);
-					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					if (flBodyshotModifer != 0.90f) // We have an attribute changing damage, modify it.
 					{
 						float flDamage = info_modified.GetDamage();
 						flDamage *= flBodyshotModifer;
@@ -5186,9 +5194,9 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 				CTFWeaponBase* pWpn = pAttacker->GetActiveTFWeapon();
 				if (pWpn)
 				{
-					float flBodyshotModifer = 1.0f;
+					float flBodyshotModifer = 0.90f;
 					CALL_ATTRIB_HOOK_INT_ON_OTHER(pWpn, flBodyshotModifer, rightlegshot_damage_modify);
-					if (flBodyshotModifer != 1.0f) // We have an attribute changing damage, modify it.
+					if (flBodyshotModifer != 0.90f) // We have an attribute changing damage, modify it.
 					{
 						float flDamage = info_modified.GetDamage();
 						flDamage *= flBodyshotModifer;
@@ -6304,6 +6312,8 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 
 				float flDistance = Max( 1.0f, ( WorldSpaceCenter() - pAttacker->WorldSpaceCenter() ).Length() );
 				float flOptimalDistance = 512.0;
+
+				
 				
 				if ( tf2v_new_sentry_damage_falloff.GetBool())
 				{
@@ -6328,6 +6338,12 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 					// If we're a crossbow, change our falloff band so that our 100% is at long range.
 					flCenter = RemapVal( flDistance, 0.0, (2.0 * flOptimalDistance), 0.0, 0.5 );
 				}
+				
+				
+
+				
+				/*if (flFalloffMult != 0.0f)
+					flCenter = flFalloffMult;*/
 
 				float flRandomVal;
 				if ( tf_damage_disablespread.GetBool() || (!flCenVar) )
@@ -6391,9 +6407,19 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 						break;
 					}
 
+					
+
 					// Special cases in case we're farther away than the optimal distance.
 					if (flRandomVal < 0.5)
 					{
+						
+						if (pWeapon && pWeapon->GetWeaponID() == TF_WEAPON_SMG)
+						{
+							// If we're a crossbow, change our falloff band so that our 100% is at long range.
+							flRandomVal = 0.4;
+						}
+							
+							
 						if ((bitsDamage & DMG_MINICRITICAL) && (pWeapon->GetWeaponID() != TF_WEAPON_CROSSBOW))
 						{
 							// If we're farther/below .5 (100% damage) and have minicrits, make up for the distance.
@@ -6407,6 +6433,8 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 					}
 
 				}
+
+				
 
 				float flOut;
 				if (!tf2v_use_linear_damage.GetBool())
@@ -7495,6 +7523,7 @@ void CTFPlayer::ApplyPushFromDamage( const CTakeDamageInfo &info, Vector &vecDir
 
 		if ( info.GetDamageType() & DMG_BLAST )
 		{
+			vecForce *= 0.3;
 			m_bBlastLaunched = true;
 		}
 		

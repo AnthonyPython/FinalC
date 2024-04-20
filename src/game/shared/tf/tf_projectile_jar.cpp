@@ -764,4 +764,140 @@ void CTFProjectile_JarGas::Precache( void )
 
 	BaseClass::Precache();
 }
+
+
+#endif
+
+//=============================================================================
+//
+// Weapon JarGas
+//
+
+IMPLEMENT_NETWORKCLASS_ALIASED(TFProjectile_JarGrenade, DT_TFProjectile_JarGrenade)
+
+BEGIN_NETWORK_TABLE(CTFProjectile_JarGrenade, DT_TFProjectile_JarGrenade)
+END_NETWORK_TABLE()
+
+#ifdef GAME_DLL
+BEGIN_DATADESC(CTFProjectile_JarGrenade)
+END_DATADESC()
+#endif
+
+LINK_ENTITY_TO_CLASS(tf_projectile_jar_grenade, CTFProjectile_JarGrenade);
+PRECACHE_REGISTER(tf_projectile_jar_grenade);
+
+#ifdef GAME_DLL
+CTFProjectile_JarGrenade* CTFProjectile_JarGrenade::Create(CBaseEntity* pWeapon, const Vector& vecOrigin, const QAngle& vecAngles, const Vector& vecVelocity, CBaseCombatCharacter* pOwner, CBaseEntity* pScorer, const AngularImpulse& angVelocity, const CTFWeaponInfo& weaponInfo)
+{
+	CTFProjectile_JarGrenade* pJar = static_cast<CTFProjectile_JarGrenade*>(CBaseEntity::CreateNoSpawn("tf_projectile_jar_grenade", vecOrigin, vecAngles, pOwner));
+
+	if (pJar)
+	{
+		// Set scorer.
+		pJar->SetScorer(pScorer);
+
+		// Set firing weapon.
+		pJar->SetLauncher(pWeapon);
+
+		DispatchSpawn(pJar);
+
+		pJar->InitGrenade(vecVelocity, angVelocity, pOwner, weaponInfo);
+
+		pJar->ApplyLocalAngularVelocityImpulse(angVelocity);
+	}
+
+	return pJar;
+}
+
+void CTFProjectile_JarGrenade::Spawn(void)
+{
+	SetModel(TF_WEAPON_JARGAS_MODEL);
+
+	BaseClass::Spawn();
+	SetTouch(&CTFProjectile_JarGrenade::JarTouch);
+
+	// Pumpkin Bombs
+	AddFlag(FL_GRENADE);
+
+	// We don't need this, but it's useful for situations where it could get stuck on level geometry (dynamic ramps)
+	SetDetonateTimerLength(2.0f);
+
+	// Don't collide with anything for a short time so that we never get stuck behind surfaces
+	SetCollisionGroup(TFCOLLISION_GROUP_NONE);
+
+	AddSolidFlags(FSOLID_TRIGGER);
+}
+
+void CTFProjectile_JarGrenade::VPhysicsCollision(int index, gamevcollisionevent_t* pEvent)
+{
+	BaseClass::BaseClass::VPhysicsCollision(index, pEvent);
+
+	int otherIndex = !index;
+	CBaseEntity* pHitEntity = pEvent->pEntities[otherIndex];
+
+	if (!pHitEntity)
+	{
+		return;
+	}
+
+	// Blow up if we hit something static in the world.
+	if ((pHitEntity->entindex() == 0) && (pHitEntity->GetMoveType() == MOVETYPE_NONE))
+	{
+		// Blow up next think.
+		//SetThink(&CTFProjectile_Jar::Detonate);
+		//SetNextThink(gpGlobals->curtime);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CTFProjectile_JarGrenade::Precache(void)
+{
+	PrecacheModel(TF_WEAPON_JARGAS_MODEL);
+	PrecacheParticleSystem("peejar_impact_gas");
+
+	BaseClass::Precache();
+}
+
+void CTFProjectile_JarGrenade::Explode(trace_t* pTrace, int bitsDamageType)
+{
+	CTFWeaponBaseGrenadeProj::Explode(pTrace, bitsDamageType);
+}
+
+void CTFProjectile_JarGrenade::JarTouch(CBaseEntity* pOther)
+{
+	if (pOther == GetThrower())
+	{
+		// Make us solid if we're not already
+		if (GetCollisionGroup() == TFCOLLISION_GROUP_NONE)
+		{
+			SetCollisionGroup(COLLISION_GROUP_PROJECTILE);
+		}
+		return;
+	}
+
+	// Verify a correct "other."
+	if (!pOther->IsSolid() || pOther->IsSolidFlagSet(FSOLID_VOLUME_CONTENTS))
+		return;
+
+	// Handle hitting skybox (disappear).
+	trace_t pTrace;
+	Vector velDir = GetAbsVelocity();
+	VectorNormalize(velDir);
+	Vector vecSpot = GetAbsOrigin() - velDir * 32;
+	UTIL_TraceLine(vecSpot, vecSpot + velDir * 64, MASK_SOLID, this, COLLISION_GROUP_NONE, &pTrace);
+
+	if (pTrace.fraction < 1.0 && pTrace.surface.flags & SURF_SKY)
+	{
+		UTIL_Remove(this);
+		return;
+	}
+
+	
+	{
+		return;
+	}
+}
+
 #endif

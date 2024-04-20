@@ -998,6 +998,7 @@ void CHudItemEffects::SetPlayer( C_TFPlayer *pPlayer )
 			break;
 		case TF_CLASS_DEMOMAN:
 			AddItemMeter( NEW_WEAPON_METER( C_TFSword, false, "resource/UI/HudItemEffectMeter_Demoman.res" ) );
+			AddItemMeter( NEW_WEAPON_METER( C_TFJarGrenade, true, "resource/UI/HudItemEffectMeter_Scout.res"));
 			break;
 		case TF_CLASS_HEAVYWEAPONS:
 			AddItemMeter( NEW_WEAPON_METER( C_TFLunchBox, true, NULL ) );

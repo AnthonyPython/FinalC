@@ -39,6 +39,7 @@ public:
 	DECLARE_SERVERCLASS();
 
 	CObjectSentrygun();
+	~CObjectSentrygun();
 
 	static CObjectSentrygun* Create(const Vector &vOrigin, const QAngle &vAngles);
 
@@ -101,6 +102,40 @@ public:
 	Vector			GetEnemyAimPosition( CBaseEntity *pEnemy ) const;
 
 	virtual float	GetConstructionMultiplier( void );
+
+	/* dispenser logic stuff */
+	void RefillThink(void);
+	void DispenseThink(void);
+
+	void ResetHealingTargets(void);
+	virtual float GetDispenserRadius(void);
+	virtual float GetHealRate(void);
+	virtual float GetAmmoRate(void);
+
+	virtual int	DispenseMetal(CTFPlayer* pPlayer);
+	virtual int GetAvailableMetal(void) const { return m_iAmmoMetal; }
+
+	virtual void StartTouch(CBaseEntity* pOther);
+	virtual void EndTouch(CBaseEntity* pOther);
+
+	//virtual int	ObjectCaps(void) { return (BaseClass::ObjectCaps() | FCAP_IMPULSE_USE); }
+
+	//virtual int GetBaseHealth(void);
+
+	virtual bool DispenseAmmo(CTFPlayer* pPlayer);
+
+	void StartHealing(CBaseEntity* pOther);
+	void StopHealing(CBaseEntity* pOther);
+
+	void AddHealingTarget(CBaseEntity* pOther);
+	void RemoveHealingTarget(CBaseEntity* pOther);
+	bool IsHealingTarget(CBaseEntity* pTarget);
+
+	bool CouldHealTarget(CBaseEntity* pTarget);
+
+	Vector GetHealOrigin(void);
+
+	CUtlVector< EHANDLE >	m_hHealingTargets;
 
 private:
 
@@ -184,6 +219,28 @@ private:
 	int m_iPlacementBodygroup;
 
 	IntervalTimer m_fireTimer;
+
+
+
+	/* dispenser stuff */
+
+
+	// Entities currently being touched by this trigger
+	CUtlVector< EHANDLE >	m_hTouchingEntities;
+
+	CNetworkVar(int, m_iAmmoMetal);
+	//CNetworkVar(bool, m_bStealthed);
+
+	bool m_bPlayRefillSound;
+	bool m_bPlayAmmoPickupSound;
+
+	float m_flNextAmmoDispense;
+	//float m_flNextStealthThink;
+
+	//bool m_bIsUpgrading;
+
+	EHANDLE m_hTouchTrigger;
+	string_t m_szTriggerName;
 
 	DECLARE_DATADESC();
 };

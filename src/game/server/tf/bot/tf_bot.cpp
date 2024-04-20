@@ -576,6 +576,7 @@ bool CTFBot::IsExplosiveProjectileWeapon( CTFWeaponBase *weapon ) const
 		case TF_WEAPON_JAR_MILK:
 		case TF_WEAPON_DIRECTHIT:
 		case TF_WEAPON_JAR_GAS:
+		case TF_WEAPON_JAR_FRAG:
 			return true;
 
 		default:

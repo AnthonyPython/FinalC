@@ -68,11 +68,27 @@ public:
 
 	void			CreateSiren( void );
 	void			DestroySiren( void );
+	void			UpdateDispenseEffects( void );
 
 	// Laser methods
 	void				CreateLaserBeam( void );
 	virtual void		ClientThink( void );
 	virtual void		UpdateOnRemove( void );
+
+	int  m_iAmmoMetal;
+	//bool m_bStealthed;
+	//bool m_bStealthedLast;
+	bool m_bUpdateHealingTargets;
+	bool m_bPlayingSound;
+
+	CUtlVector< CHandle<C_TFPlayer> > m_hHealingTargets;
+
+	struct healingtargeteffects_t
+	{
+		C_BaseEntity* pTarget;
+		CNewParticleEffect* pEffect;
+	};
+	CUtlVector<healingtargeteffects_t> m_hHealingTargetEffects;
 
 	void DestroyLaserBeam( void ) 
 	{

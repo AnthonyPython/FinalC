@@ -449,7 +449,11 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -9"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
+				"fire rate penalty"						"1.1"
 			}
+			
 		}
 		"weapon_tomislav"
 		{
@@ -461,6 +465,7 @@
 			"model_player"	"models/workshop/weapons/c_models/c_tomislav/c_tomislav.mdl"
 			"attributes"
 			{
+				
 				"minigun spinup time decreased"
 				{
 					"attribute_class"	"mult_minigun_spinup_time"
@@ -615,6 +620,7 @@
 			"anim_slot"	"primary"
 			"image_inventory"	"backpack/weapons/w_models/w_stickybomb_launcher"
 			"model_player"	"models/weapons/c_models/c_stickybomb_launcher/c_stickybomb_launcher.mdl"
+			"show_in_armory" "0"
 			"used_by_classes"
 			{
 				"demoman"	"1"
@@ -754,6 +760,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -900,9 +916,21 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 -2 -9"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -918,6 +946,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -6"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"visuals"
 			{
@@ -930,6 +960,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -981,6 +1021,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -1004,6 +1054,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -11"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 		}
 		"weapon_nailgun"
@@ -1026,6 +1078,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -11"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 		}
 		"weapon_sniperrifle"
@@ -1155,6 +1209,42 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"		"10 0 -7"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
+			}
+			"attributes"
+			{
+				"allowed in medieval mode"
+				{
+					"attribute_class"	"allowed_in_medieval_mode"
+					"value"	"1"
+				}
+			}
+		}
+		"weapon_stiker_knife"
+		{
+			"item_class"	"tf_weapon_bat"
+			"item_type_name"	"#TF_Weapon_Knife"
+			"item_name"	"#TF_Weapon_Knife"
+			"item_slot"	"melee"
+			"image_inventory"	"backpack/weapons/w_models/w_knife"
+			"model_player"	"models/weapons/c_models/c_knife/c_knife.mdl"
+			"used_by_classes"
+			{
+				"demoman" "1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -7"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
+			}
+			"visuals"
+			{
+				"sound_melee_miss"	"Weapon_Knife.Miss"
+				"sound_melee_hit"	"Weapon_Knife.HitFlesh"
+				"sound_melee_hit_world"	"Weapon_Knife.HitWorld"
+				"sound_burst"		"Weapon_Knife.MissCrit"
 			}
 			"attributes"
 			{
@@ -1180,7 +1270,10 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -14"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
+			
 			"attributes"
 			{
 				"allowed in medieval mode"
@@ -1247,10 +1340,13 @@
 			"used_by_classes"
 			{
 				"pyro"	"1"
+				"soldier"	"1"
 			}
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -9"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1276,6 +1372,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"		"10 0 -6"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1311,7 +1409,9 @@
 			}
 			"static_attrs"
 			{
-			"min_viewmodel_offset"		"10 0 -7"
+				"min_viewmodel_offset"		"10 0 -7"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1337,6 +1437,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 -6 -12"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1383,6 +1485,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 -3 -11"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1426,6 +1530,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"damage penalty"
 				{
 					"attribute_class"	"mult_dmg"
@@ -1470,6 +1584,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"		"10 0 -12"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1518,6 +1634,20 @@
 				}
 			}
 		}
+		
+		"weapon_defib"
+		{
+			"prefab"		"weapon_bonesaw"
+			"item_name"		"#TF_Defib"
+			"propername"		"1"
+			"item_class"	"tf_weapon_defib"
+			"item_type_name"	"#TF_Weapon_Bonesaw"
+			"item_name"	"#TF_Weapon_Bonesaw"
+			"item_slot"	"melee"
+			"image_inventory"	"backpack/workshop/weapons/c_models/c_amputator/c_amputator"
+			"model_player"	"models/weapons/c_models/c_bonesaw/c_bonesaw.mdl"
+			
+		}
 		"weapon_shotgun"
 		{
 			"item_class"	"tf_weapon_shotgun"
@@ -1528,6 +1658,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"		"10 0 -9"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 			"attributes"
 			{
@@ -1624,7 +1756,7 @@
 			"propername"	"1"
 			"image_inventory"	"backpack/workshop/weapons/c_models/c_tele_shotgun/c_tele_shotgun"
 			"model_player"	"models/workshop/weapons/c_models/c_tele_shotgun/c_tele_shotgun.mdl"
-			"item_slot"	"primary"
+			"item_slot"	"secondary"
 			"used_by_classes"
 			{
 				"engineer"	"1"
@@ -1701,7 +1833,7 @@
 			"item_slot"	"primary"
 			"used_by_classes"
 			{
-				"engineer"	"primary"
+				"engineer"	"secondary"
 				"pyro" "secondary"
 				"soldier" "secondary"
 				"heavy" "secondary"
@@ -1759,16 +1891,18 @@
 			"item_class"	"tf_weapon_smg"
 			"item_type_name"	"#TF_Weapon_SMG"
 			"item_name"	"#TF_Weapon_SMG"
-			"item_slot"	"secondary"
+			"item_slot"	"primary"
 			"image_inventory"	"backpack/weapons/w_models/w_smg"
 			"model_player"	"models/weapons/c_models/c_smg/c_smg.mdl"
 			"used_by_classes"
 			{
-				"sniper"	"1"
+				"demoman"	"1"
 			}
 			"static_attrs"
 			{
 				"min_viewmodel_offset"					"10 0 -7"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 		}
 		"weapon_syringegun"
@@ -1786,6 +1920,8 @@
 			"static_attrs"
 			{
 				"min_viewmodel_offset"		"10 0 -12"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
 			}
 		}
 		"weapon_pistol"
@@ -1796,9 +1932,24 @@
 			"item_slot"	"secondary"
 			"image_inventory"	"backpack/weapons/c_models/c_pistol"
 			"model_player"	"models/weapons/c_models/c_pistol/c_pistol.mdl"
+			"attributes"
+			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
+			}
 			"static_attrs"
 			{
 				"min_viewmodel_offset"				"10 0 -10"
+				"use hit location"					"1"
+				"headshots become minicrits"		"1"
 			}
 		}
 		"weapon_revolver"
@@ -1813,6 +1964,19 @@
 			"used_by_classes"
 			{
 				"spy"	"1"
+			}
+			"attributes"
+			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 			}
 			"static_attrs"
 			{
@@ -1841,6 +2005,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"slow enemy on hit"
 				{
 					"attribute_class"	"mult_onhit_enemyspeed"
@@ -1871,6 +2045,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"energy weapon no ammo"
 				{
 					"attribute_class"	"energy_weapon_no_ammo"
@@ -1911,7 +2095,7 @@
 			"item_type_name"	"#TF_Weapon_IndivisibleParticleSmasher"
 			"item_name"	"#TF_Pomson"
 			"item_description"	"#TF_Pomson_Desc"
-			"item_slot"	"primary"
+			"item_slot"	"secondary"
 			"item_logname"	"pomson"
 			"item_iconname"	"pomson"
 			"propername"	"1"
@@ -1927,6 +2111,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"energy weapon no ammo"
 				{
 					"attribute_class"	"energy_weapon_no_ammo"
@@ -1990,7 +2184,7 @@
 			"item_class"	"tf_weapon_pda_engineer_build"
 			"item_name"	"#TF_Weapon_PDA_Engineer_Builder"
 			"item_type_name"	"#TF_Weapon_PDA_Engineer"
-			"item_slot"	"pda"
+			"item_slot"	"primary"
 			"anim_slot"	"pda"
 			"image_inventory"	"backpack/weapons/w_models/w_builder"
 			"model_player"	"models/weapons/c_models/c_builder/c_builder.mdl"
@@ -2429,6 +2623,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -2458,6 +2662,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"hidden secondary max ammo penalty"
 				{
 					"attribute_class"	"mult_maxammo_secondary"
@@ -2580,6 +2794,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"fire rate bonus"
 				{
 					"attribute_class"	"mult_postfiredelay"
@@ -2729,6 +2953,33 @@
 			"used_by_classes"
 			{
 				"sniper"	"1"
+			}
+			"attributes"
+			{
+				"jarate description"
+				{
+					"attribute_class"	"desc_jarate_description"
+					"value"	"1"
+				}
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -9"
+			}
+		}
+		"weapon_frag"
+		{
+			"item_class"	"tf_weapon_handgrenade"
+			"base_item_name"	"Jarate"
+			"item_type_name"	"#TF_Weapon_Jar"
+			"item_name"	"#TF_Unique_Achievement_Jar"
+			"item_slot"	"pda"
+			"anim_slot"	"item1"
+			"image_inventory"	"backpack/weapons/c_models/urinejar"
+			"model_player"	"models/weapons/c_models/urinejar.mdl"
+			"used_by_classes"
+			{
+				"demoman"	"1"
 			}
 			"attributes"
 			{
@@ -2950,6 +3201,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"slow enemy on hit shortstop"
 				{
 					"attribute_class"	"mult_onhit_enemyspeed_shortstop"
@@ -3052,6 +3313,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"mod ammo per shot"
 				{
 					"attribute_class"	"mod_ammo_per_shot"
@@ -3276,7 +3547,7 @@
 			"item_class"	"tf_weapon_sentry_revenge"
 			"item_type_name"	"#TF_Weapon_Shotgun"
 			"item_name"	"#TF_Unique_Sentry_Shotgun"
-			"item_slot"	"primary"
+			"item_slot"	"secondary"
 			"item_logname"	"frontier_justice"
 			"item_iconname"	"frontier_kill"
 			"image_inventory"	"backpack/weapons/c_models/c_frontierjustice/c_frontierjustice"
@@ -3287,6 +3558,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"mod sentry killed revenge"
 				{
 					"attribute_class"	"sentry_killed_revenge"
@@ -3397,6 +3678,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -3446,6 +3737,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"allowed in medieval mode"
 				{
 					"attribute_class"	"allowed_in_medieval_mode"
@@ -3481,6 +3782,16 @@
 			}
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"crit mod disabled"
 				{
 					"attribute_class"	"mult_crit_chance"
@@ -3528,6 +3839,16 @@
 			"model_player"	"models/workshop/weapons/c_models/c_battleaxe/c_battleaxe.mdl"
 			"attributes"
 			{
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
 				"provide on active"
 				{
 					"attribute_class"	"provide_on_active"
@@ -3581,7 +3902,6 @@
 		{
 			"prefab"	"weapon_sword"
 			"item_name"	"#TF_PersianPersuader"
-			"item_description"	"#TF_PersianPersuader_Desc"
 			"item_logname"	"persian_persuader"
 			"item_iconname"	"persian_persuader"
 			"propername"	"1"
@@ -3714,11 +4034,22 @@
 			}
 			"attributes"
 			{
-				"sniper no headshots"
+				"use hit location"
 				{
-					"attribute_class" "set_weapon_mode"
+					"attribute_class"	"use_hit_locations"
 					"value" "1"
 				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
+				"damage penalty"
+				{
+					"attribute_class"	"mult_dmg"
+					"value"	"0.933"
+				}
+				
 				"maxammo primary reduced"
 				{
 					"attribute_class"	"mult_maxammo_primary"
@@ -3931,7 +4262,6 @@
 			"prefab"	"weapon_bottle"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
 		}
 		"2"
 		{
@@ -3978,8 +4308,8 @@
 			"name"	"TF_WEAPON_SHOVEL"
 			"prefab"	"weapon_shovel"
 			"item_quality" "normal"
+			"show_in_armory" "0"
 			"year"			"2007"
-			"baseitem"	"1"
 		}
 		"7"
 		{
@@ -4004,7 +4334,7 @@
 			"item_quality" "normal"
 			"year"			"2007"
 			"baseitem"	"1"
-			"item_slot"	"primary"
+			"item_slot"	"secondary"
 			"used_by_classes"
 			{
 				"engineer"	"1"
@@ -4079,7 +4409,7 @@
 			"prefab"	"weapon_smg"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
+			"show_in_armory"			"0"
 		}
 		"17"
 		{
@@ -4103,7 +4433,6 @@
 			"prefab"	"weapon_grenade_launcher"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
 		}
 		"20"
 		{
@@ -4111,7 +4440,7 @@
 			"prefab"	"weapon_stickybomb_launcher"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
+
 		}
 		"21"
 		{
@@ -4140,7 +4469,7 @@
 			"baseitem"	"1"
 			"used_by_classes"
 			{
-				"engineer"	"1"
+				"sniper" 	"1"
 			}
 		}
 		"23"
@@ -4479,6 +4808,7 @@
 		{
 			"name"	"The Flare Gun"
 			"prefab"	"weapon_flaregun"
+			"year"			"2008"
 			"propername"	"1"
 			"item_quality" 			"vintage"
 			"attributes"
@@ -5319,6 +5649,19 @@
 					"value"	"2"
 				}
 			}
+		}
+		"174"
+		{
+			"name"	"The Defibulator"
+			"prefab"	"weapon_bonesaw"
+			"item_class"	"tf_weapon_defib"
+			"year"			"2010"
+			"item_quality" 			"vintage"
+			"item_logname"	"battleneedle"
+			"item_iconname"	"battleneedle"
+			"item_name"	"Defibulator"
+			"image_inventory"	"backpack/workshop/weapons/c_models/c_uberneedle/c_uberneedle"
+			"model_player"	"models/workshop/weapons/c_models/c_uberneedle/c_uberneedle.mdl"
 		}
 		"214"
 		{
@@ -6684,52 +7027,6 @@
 				"skin" "1"
 			}
 		}
-		"413"
-		{
-			"name"	"The Solemn Vow"
-			"prefab"	"weapon_melee_allclass"
-			"year"				"2011"
-			"item_quality" 			"unique"
-			"item_class"	"tf_weapon_bonesaw"
-			"item_logname"	"solemn_vow"
-			"item_iconname"	"solemn_vow"
-			"item_type_name"	"#TF_Weapon_Bust"
-			"item_description"	"#TF_SolemnVow_Desc"
-			"item_name"	"#TF_SolemnVow"
-			"propername"	"1"
-			"image_inventory"	"backpack/weapons/c_models/c_hippocrates_bust/c_hippocrates_bust"
-			"model_player"	"models/weapons/c_models/c_hippocrates_bust/c_hippocrates_bust.mdl"
-			"used_by_classes"
-			{
-				"medic"	"1"
-			}
-			"static_attrs"
-			{
-				"min_viewmodel_offset"		"10 -4 -12"				
-			}
-			"attributes"
-			{
-				"fire rate penalty"
-				{
-					"attribute_class"	"mult_postfiredelay"
-					"value"	"1.1"
-				}
-				"mod see enemy health"
-				{
-					"attribute_class"	"see_enemy_health"
-					"value" "1"
-				}
-				"move speed bonus"
-				{
-					"attribute_class"	"mult_player_movespeed"
-					"value" "1.1"
-				}
-			}
-			"visuals"
-			{
-				"sound_melee_hit"	"Weapon_Machete.HitFlesh"
-			}
-		}
 		"414"
 		{
 			"name"	"The Liberty Launcher"
@@ -6830,7 +7127,7 @@
 			"year"			"2011"
 			"used_by_classes"
 			{
-				"engineer" "primary"
+				"engineer" "secondary"
 				"heavy" "secondary"
 			}
 		}
@@ -6920,7 +7217,7 @@
 			{
 				"pyro"	"secondary"
 				"soldier"	"secondary"
-				"engineer"	"primary"
+				"engineer"	"secondary"
 			}
 		}
 		"441"
@@ -7299,7 +7596,7 @@
 			"propername"	"1"
 			"image_inventory"	"backpack/workshop_partner/weapons/c_models/c_dex_shotgun/c_dex_shotgun"
 			"model_player"	"models/workshop_partner/weapons/c_models/c_dex_shotgun/c_dex_shotgun.mdl"
-			"item_slot"	"primary"
+			"item_slot"	"secondary"
 			"used_by_classes"
 			{
 				"engineer"	"1"
@@ -8509,6 +8806,165 @@
 				}
 			}
 		}
+		"1191"
+		{
+			"name"	"Frag Grenae"
+			"prefab"	"weapon_frag"
+			"year"			"2009"
+			"item_quality" 			"vintage"
+			"baseitem" "1"
+		}
+		"1192"
+		{
+			"name"	"TF_WEAPON_KNIFE"
+			"prefab"	"weapon_stiker_knife"
+			"item_quality" "normal"
+			"year"			"2007"
+			"baseitem"	"1"
+		}
+		"1193"
+		{
+			"name"						"assault rifle"
+			"item_name"                 "M4"
+			"show_in_armory"			"1"
+			"prefab"        			"weapon_smg"
+			"item_description"			"eat lead."
+			"model_world"				"models/weapons/c_models/v_mk18.mdl"
+			"model_player"				"models/weapons/c_models/v_mk18.mdl"
+			"attach_to_hands"			"2"
+			"item_slot"                    "primary"
+            "bucket"                    "0"
+			"baseitem"					"1"
+			"used_by_classes"
+			{
+			   "demoman"				"1"
+			}
+			"attributes"
+			{
+			    
+				"weapon spread bonus"
+                {
+                    "attribute_class"    "mult_spread_sale"
+                    "value"                "0.6"
+                }
+				"dmg falloff decreased"
+                {
+                    "attribute_class"    "mult_dmg_falloff"
+                    "value"                "0.45"
+                }
+				"primay max ammo bonus"
+				{
+				    "attribute_class"   "mult_maxammo_primary"
+					"value"             "1.1"
+				}
+				"damage bonus" 
+				{
+					"attribute_class"	"mult_dmg"
+					"value"				"1.97"
+			    }
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}
+				"fire rate penalty"
+				{
+				    "attribute_class"   "mult_postfiredelay"
+					"value"             "1.08"
+				}				
+			}	
+		}
+		"1194"
+		{
+			"name"						"ak"
+			"item_name"                 "communisum"
+			"show_in_armory"			"1"
+			"prefab"        			"weapon_smg"
+			"item_description"			"It seems you have a bullet in your cranium comrade."
+			"model_world"				"models/weapons/w_models/w_ak47.mdl"
+			"model_player"				"models/weapons/v_models/v_ak47.mdl"
+			"attach_to_hands"			"2"
+			"item_slot"                    "primary"
+            "bucket"                    "0"
+			"used_by_classes"
+			{
+			   "demoman"					"1"
+			}
+			"attributes"
+			{
+				"dmg falloff decreased"
+                {
+                    "attribute_class"    "mult_dmg_falloff"
+                    "value"                "0.07"
+                }
+				"primay max ammo bonus"
+				{
+				    "attribute_class"   "mult_maxammo_primary"
+					"value"             "1.1"
+				}
+				"damage bonus" 
+				{
+					"attribute_class"	"mult_dmg"
+					"value"				"2.5"
+			    }
+				"fire rate penalty"
+				{
+				    "attribute_class"   "mult_postfiredelay"
+					"value"             "1.35"
+				}				
+				"use hit location"
+				{
+					"attribute_class"	"use_hit_locations"
+					"value" "1"
+				}
+				"headshots become minicrits"
+				{
+					"attribute_class"	"headshots_become_minicrits"
+					"value" "1"
+				}				
+			}	
+			
+		}
+		"1195"
+		{
+			"name"						"357"
+			"item_name"                 "deagle"
+			"show_in_armory"			"1"
+			"prefab"        			"weapon_pistol"
+			"item_description"			"it's a deagle!"
+			"item_slot"                    "secondary"
+            "bucket"                    "1"
+			"baseitem"					"1"
+			"used_by_classes"
+			{
+			   "demoman"				"1"
+			}
+			"attributes"
+			{
+				"fire rate penalty"
+				{
+					"attribute_class"	"mult_postfiredelay"
+					"value"	"2.0"
+				}
+			    "clip size penalty" 
+				{
+					"attribute_class"	"mult_clipsize"
+					"value"				"0.58"
+				}
+				"damage bonus" 
+				{
+					"attribute_class"	"mult_dmg"
+					"value"				"1.45"
+			    }
+		    }  
+		}
+		
+		
 	}
 	"cosmeticitems"
 	{
@@ -9635,7 +10091,6 @@
 			"prefab"		"weapon_wrangler weapon_reskin"
 			"year"					"2015"
 			"item_name"		"#TF_invasion_wrangler"
-			"item_description"		"#TF_invasion_wrangler_Desc"
 			"item_logname"		"giger_counter"
 			"item_iconname"		"giger_counter"
 			"propername"		"1"
@@ -17888,6 +18343,166 @@
 			"attribute_class"	"item_drop_wave"
 			"hidden"			"1"
 			"stored_as_integer"	"1"
+		}
+		"3019"
+		{
+			"name"	"headshots become minicrits"
+			"attribute_class"	"headshots_become_minicrits"
+			"description_string"	"#Attrib_HeadshotsBecomeMiniCrits"
+			"description_format"	"value_is_additive"
+			"hidden"	"1"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3020"
+		{
+			"name"	"use hit location"
+			"attribute_class"	"use_hit_locations"
+			"description_string"	"#Attrib_UseHitLocations"
+			"description_format"	"value_is_additive"
+			"hidden"	"1"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3021"
+		{
+			"name"	"chestshot damage decrease"
+			"attribute_class"	"chestshot_damage_modify"
+			"description_string"	"#Attrib_ChestshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3022"
+		{
+			"name"	"chestshot damage increase"
+			"attribute_class"	"chestshot_damage_modify"
+			"description_string"	"#Attrib_ChestshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3023"
+		{
+			"name"	"stomachshot damage decrease"
+			"attribute_class"	"stomachshot_damage_modify"
+			"description_string"	"#Attrib_StomachshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3024"
+		{
+			"name"	"stomachshot damage increase"
+			"attribute_class"	"stomachshot_damage_modify"
+			"description_string"	"#Attrib_StomachshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3025"
+		{
+			"name"	"leftarmshot damage decrease"
+			"attribute_class"	"leftarmshot_damage_modify"
+			"description_string"	"#Attrib_LeftarmshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3026"
+		{
+			"name"	"leftarmshot damage increase"
+			"attribute_class"	"leftarmshot_damage_modify"
+			"description_string"	"#Attrib_LeftarmshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3027"
+		{
+			"name"	"rightarmshot damage decrease"
+			"attribute_class"	"rightarmshot_damage_modify"
+			"description_string"	"#Attrib_RightarmshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3028"
+		{
+			"name"	"rightarmshot damage increase"
+			"attribute_class"	"rightarmshot_damage_modify"
+			"description_string"	"#Attrib_RightarmshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3029"
+		{
+			"name"	"leftlegshot damage decrease"
+			"attribute_class"	"leftlegshot_damage_modify"
+			"description_string"	"#Attrib_LeftlegshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3030"
+		{
+			"name"	"leftlegshot damage increase"
+			"attribute_class"	"leftlegshot_damage_modify"
+			"description_string"	"#Attrib_LeftlegshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3031"
+		{
+			"name"	"rightlegshot damage decrease"
+			"attribute_class"	"rightlegshot_damage_modify"
+			"description_string"	"#Attrib_RightlegshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3032"
+		{
+			"name"	"rightlegshot damage increase"
+			"attribute_class"	"rightlegshot_damage_modify"
+			"description_string"	"#Attrib_RightlegshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3033"
+		{
+			"name"	"gearshot damage decrease"
+			"attribute_class"	"gearshot_damage_modify"
+			"description_string"	"#Attrib_GearshotDamageDecrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"negative"
+			"stored_as_integer"	"0"
+		}
+		"3034"
+		{
+			"name"	"gearshot damage increase"
+			"attribute_class"	"gearshot_damage_modify"
+			"description_string"	"#Attrib_GearshotDamageIncrease"
+			"description_format"	"value_is_percentage"
+			"hidden"	"0"
+			"effect_type"	"positive"
+			"stored_as_integer"	"0"
 		}
 		"10001"
 		{

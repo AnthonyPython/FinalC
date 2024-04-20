@@ -390,8 +390,8 @@ void CBaseObject::Spawn( void )
 	m_iUpgradeMetal = 0;
 
 	m_iUpgradeMetalRequired = GetObjectInfo( ObjectType() )->m_UpgradeCost;
-	m_iHighestUpgradeLevel = GetMaxUpgradeLevel();
-	//m_iHighestUpgradeLevel = GetObjectInfo(ObjectType())->m_MaxUpgradeLevel;
+	//m_iHighestUpgradeLevel = GetMaxUpgradeLevel();
+	m_iHighestUpgradeLevel = GetObjectInfo(ObjectType())->m_MaxUpgradeLevel;
 
 	SetContextThink( &CBaseObject::BaseObjectThink, gpGlobals->curtime + 0.1, OBJ_BASE_THINK_CONTEXT );
 
@@ -2137,7 +2137,7 @@ void CBaseObject::OnConstructionHit( CTFPlayer *pPlayer, CTFWrench *pWrench, Vec
 float CBaseObject::GetConstructionMultiplier( void )
 {
 	
-	float flMultiplier = 1.0f;
+	float flMultiplier = 1.8f;
 
 	// Minis deploy faster.
 	if ( IsMiniBuilding() )
@@ -2150,7 +2150,7 @@ float CBaseObject::GetConstructionMultiplier( void )
 
 	// Re-deploy twice as fast.
 	if ( IsRedeploying() )
-		flMultiplier *= 2.0f;
+		flMultiplier *= 2.3f;
 	
 	// Reverse our construction amount.
 	// Don't be affected by buffs.

@@ -2893,7 +2893,12 @@ void CTFWeaponBase::ApplyOnHitAttributes( CBaseEntity *pVictim, CTFPlayer *pAtta
 		if ( !pTFVictim->m_Shared.InCond( TF_COND_HEALTH_BUFF ) && !pTFVictim->m_Shared.InCond( TF_COND_MEGAHEAL ) )
 		{
 			float flSlowOnHit = 0.0f;
+
+		
+
 			CALL_ATTRIB_HOOK_FLOAT( flSlowOnHit, mult_onhit_enemyspeed );
+
+			
 			if ( flSlowOnHit && RandomFloat() < flSlowOnHit )
 			{
 				pTFVictim->m_Shared.StunPlayer(

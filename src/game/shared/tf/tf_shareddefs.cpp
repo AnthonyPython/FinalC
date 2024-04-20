@@ -482,28 +482,28 @@ static pszWpnEntTranslationListEntry pszWpnEntTranslationList[] =
 	"tf_weapon_pistol",				// Base weapon to translate
 	NULL,
 	"tf_weapon_pistol_scout",		// Scout
-	NULL,							// Sniper
-	NULL,							// Soldier
-	NULL,							// Demoman
-	NULL,							// Medic
-	NULL,							// Heavy
-	NULL,							// Pyro
-	NULL,							// Spy
+	"tf_weapon_pistol",							// Sniper
+	"tf_weapon_pistol",							// Soldier
+	"tf_weapon_pistol",							// Demoman
+	"tf_weapon_pistol",							// Medic
+	"tf_weapon_pistol",							// Heavy
+	"tf_weapon_pistol",							// Pyro
+	"tf_weapon_pistol",							// Spy
 	"tf_weapon_pistol",				// Engineer
 	},
 
 	{
 	"tf_weapon_katana",				// Base weapon to translate
 	NULL,
-	NULL,							// Scout
-	NULL,							// Sniper
+	"tf_weapon_bat",				// Scout
+	"tf_weapon_club",				// Sniper
 	"tf_weapon_shovel",				// Soldier
 	"tf_weapon_bottle",				// Demoman
-	NULL,							// Medic
-	NULL,							// Heavy
-	NULL,							// Pyro
-	NULL,							// Spy
-	NULL,							// Engineer
+	"tf_weapon_bonesaw",			// Medic
+	"tf_weapon_fists",				// Heavy
+	"tf_weapon_fireaxe",			// Pyro
+	"tf_weapon_knife",				// Spy
+	"tf_weapon_wrench",				// Engineer
 	},
 
 	{
@@ -704,6 +704,8 @@ const char *g_aWeaponNames[] =
 	"TF_WEAPON_FLAREGUN_REVENGE",
 	"TF_WEAPON_ROCKETLAUNCHER_FIREBALL",
 	"TF_WEAPON_DEFIB",
+	"TF_WEAPON_JAR_FRAG",
+	"TF_WEAPON_GRENADE_FRAG",
 
 	"TF_WEAPON_COUNT",	// end marker, do not add below here
 };
@@ -845,6 +847,8 @@ int g_aWeaponDamageTypes[] =
 	DMG_IGNITE,                                 // TF_WEAPON_FLAREGUN_REVENGE
 	DMG_IGNITE | DMG_HALF_FALLOFF | DMG_USEDISTANCEMOD,	// TF_WEAPON_ROCKETLAUNCHER_FIREBALL
 	DMG_CLUB,									// TF_WEAPON_DEFIB,
+	DMG_GENERIC,								// TF_WEAPON_JAR_FRAG,
+	DMG_BLAST | DMG_HALF_FALLOFF,				// TF_WEAPON_GRENADE_FRAG,
 	
 	// This is a special entry that must match with TF_WEAPON_COUNT
 	// to protect against updating the weapon list without updating this list
@@ -912,7 +916,8 @@ const char *g_szProjectileNames[] =
 	"weapon_grenade_pipebomb_projectile",
 	"projectile_balloffire",
 	"projectile_energyorb",
-	"projectile_jar_gas"
+	"projectile_jar_gas",
+	"projectile_frag"
 };
 
 // these map to the projectiles named in g_szProjectileNames
@@ -961,6 +966,7 @@ int g_iProjectileWeapons[] =
 	TF_WEAPON_FLAME_BALL,
 	TF_WEAPON_MECHANICAL_ARM,
 	TF_WEAPON_JAR_GAS,
+	TF_WEAPON_JAR_FRAG,
 };
 
 const char *g_pszHintMessages[] =

@@ -18,7 +18,7 @@ WeaponData
 	"secondary_ammo"		"None"
 
 	// Buckets.	
-	"bucket"			"3"
+	"bucket"			"0"
 	"bucket_position"		"0"
 
 	// Model & Animation

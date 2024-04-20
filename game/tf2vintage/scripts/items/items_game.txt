@@ -615,6 +615,7 @@
 			"anim_slot"	"primary"
 			"image_inventory"	"backpack/weapons/w_models/w_stickybomb_launcher"
 			"model_player"	"models/weapons/c_models/c_stickybomb_launcher/c_stickybomb_launcher.mdl"
+			"show_in_armory" "0"
 			"used_by_classes"
 			{
 				"demoman"	"1"
@@ -4110,7 +4111,7 @@
 			"prefab"	"weapon_stickybomb_launcher"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
+			"baseitem"	"0"
 		}
 		"21"
 		{

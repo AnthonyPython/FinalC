@@ -30,12 +30,14 @@
 	#include "tf_projectile_energy_ring.h"
 	#include "tf_weapon_flaregun.h"
 	#include "te.h"
+	
 
 	#include "tf_gamerules.h"
 	#include "soundent.h"
 
 #else	// Client specific.
 
+	#include "prediction.h"
 	#include "c_tf_player.h"
 	#include "c_te_effect_dispatch.h"
 
@@ -139,6 +141,12 @@ void CTFWeaponBaseGun::PrimaryAttack( void )
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
 	FireProjectile( pPlayer );
+
+#ifdef CLIENT_DLL
+
+	if (prediction->IsFirstTimePredicted())
+		pPlayer->DoRecoil(GetWeaponID(), m_pWeaponInfo->GetWeaponData(m_iWeaponMode).m_flRecoil);
+#endif
 
 	// Set next attack times.
 	float flFireDelay = m_pWeaponInfo->GetWeaponData( m_iWeaponMode ).m_flTimeFireDelay;
@@ -297,6 +305,7 @@ CBaseEntity *CTFWeaponBaseGun::FireProjectile( CTFPlayer *pPlayer )
 		case TF_PROJECTILE_BREADMONSTER_MADMILK:
 		case TF_PROJECTILE_CLEAVER:
 		case TF_PROJECTILE_JAR_GAS:
+		case TF_PROJECTILE_JAR_GRENADE:
 			pProjectile = FireJar( pPlayer, iProjectile );
 			pPlayer->DoAnimationEvent(PLAYERANIMEVENT_ATTACK_PRIMARY);
 			break;
@@ -895,6 +904,9 @@ CBaseEntity *CTFWeaponBaseGun::FireJar( CTFPlayer *pPlayer, int iType )
 			break;
 		case TF_PROJECTILE_CLEAVER:
 			pProjectile = CTFProjectile_Cleaver::Create( this, vecSrc, pPlayer->EyeAngles(), vecVelocity, pPlayer, pPlayer, spin, GetTFWpnData() );
+			break;
+		case TF_PROJECTILE_JAR_GRENADE:
+			pProjectile = CTFProjectile_JarGrenade::Create(this, vecSrc, pPlayer->EyeAngles(), vecVelocity, pPlayer, pPlayer, spin, GetTFWpnData());
 			break;
 	}
 	

@@ -31,7 +31,7 @@ struct animevent_t;
 // Construction
 #define OBJECT_CONSTRUCTION_INTERVAL			0.1
 #define OBJECT_CONSTRUCTION_STARTINGHEALTH		1.0
-#define TF_MINISENTRY_HEALTH		100
+#define TF_MINISENTRY_HEALTH		150
 
 extern ConVar object_verbose;
 extern ConVar obj_child_range_factor;
@@ -254,7 +254,7 @@ public:
 	virtual void	StartUpgrading( void );
 	virtual void	FinishUpgrading( void );
 	virtual void	UpgradeThink( void );
-	virtual int		GetMaxUpgradeLevel( void ) { return 1; }
+	virtual int		GetMaxUpgradeLevel( void ) { return m_iHighestUpgradeLevel; }
 
 	virtual char	*GetPlacementModel( void ) { return ""; }
 

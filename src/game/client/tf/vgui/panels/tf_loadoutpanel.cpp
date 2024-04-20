@@ -112,7 +112,7 @@ bool CTFLoadoutPanel::Init()
 {
 	BaseClass::Init();
 
-	m_iCurrentClass = TF_CLASS_SCOUT;
+	m_iCurrentClass = TF_CLASS_DEMOMAN;
 	m_iCurrentSlot = TF_LOADOUT_SLOT_PRIMARY;
 	m_pClassModelPanel = new CTFAdvModelPanel( this, "classmodelpanel" );
 	m_pGameModelPanel = new CModelPanel( this, "gamemodelpanel" );

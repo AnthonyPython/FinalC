@@ -185,6 +185,10 @@ ConVar tf_forced_holiday( "tf_forced_holiday", "0", FCVAR_REPLICATED, "Forced ho
 						  , ForcedHolidayChanged
 					  #endif
 );
+
+ConVar tf_allow_scout("tf_allow_scout", "0", FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Allow scout");
+ConVar tf_allow_spy("tf_allow_spy", "0", FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Allow spy");
+
 ConVar tf_item_based_forced_holiday( "tf_item_based_forced_holiday", "0", FCVAR_REPLICATED, "" 	// like a clone of tf_forced_holiday, but controlled by client consumable item use
 								 #if defined( GAME_DLL )
 									 , ForcedHolidayChanged
@@ -1683,8 +1687,28 @@ bool CTFGameRules::CanPlayerChooseClass( CBasePlayer *pPlayer, int iDesiredClass
 	int iClassLimit = 0;
 	int iClassCount = 0;
 
+	
+
 	if ( iDesiredClassIndex <= TF_LAST_NORMAL_CLASS ) 
 	{
+
+		if (iDesiredClassIndex == TF_CLASS_SCOUT)
+		{
+			if (!tf_allow_scout.GetBool())
+			{
+				return false;
+			}
+		}
+		
+
+		if (iDesiredClassIndex == TF_CLASS_SPY)
+		{
+			if (!tf_allow_spy.GetBool())
+			{
+				return false;
+			}
+		}
+
 		iClassLimit = GetClassLimit( iDesiredClassIndex );
 
 		if ( iClassLimit != -1 && pTFTeam && pTFPlayer->GetTeamNumber() >= TF_TEAM_RED )

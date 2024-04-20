@@ -9,10 +9,10 @@ PlayerClass
 	"model_hwm"		"models/player/hwm/sniper.mdl"
 	"model_hands"	"models/weapons/c_models/c_sniper_arms.mdl"
 	"localize_name"	"TF_Class_Name_Sniper"
-	"speed_max"		"300"
+	"speed_max"		"320"
 //	"health_max"		"95"
 //	"armor_max"		"25"
-	"health_max"		"125"
+	"health_max"		"170"
 	"armor_max"		"0"
 
 	// Grenades.
@@ -20,7 +20,7 @@ PlayerClass
 
 	// Weapons.
 	"weapon1"		"TF_WEAPON_SNIPERRIFLE"
-	"weapon2"		"TF_WEAPON_SMG"
+	"weapon2"		"TF_WEAPON_PISTOL"
 	"weapon3"		"TF_WEAPON_CLUB"
 	"weapon4"		""
 	"weapon5"		""
@@ -43,7 +43,7 @@ PlayerClass
 		"tf_ammo_secondary"	"75"
 		"tf_ammo_metal"		"200"
 		"tf_ammo_grenades1"	"1"
-		"tf_ammo_grenades2"	"1"
+		"tf_ammo_grenades2"	"36"
 	}	
 
 	// Death Sounds

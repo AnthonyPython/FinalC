@@ -34,6 +34,7 @@ extern ConVar cl_autorezoom;
 extern ConVar cl_autoreload;
 extern ConVar cl_flipviewmodels;
 
+#define RECOIL_DURATION 0.1
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -219,6 +220,17 @@ public:
 	bool			ShouldAutoRezoom( void ) { return cl_autorezoom.GetBool(); }
 	bool			ShouldAutoReload( void ) { return cl_autoreload.GetBool(); }
 	bool			ShouldFlipViewModel( void ) { return cl_flipviewmodels.GetBool(); }
+
+
+	//Recoil
+	float m_flRecoilTimeRemaining;
+	float m_flPitchRecoilAccumulator;
+	float m_flYawRecoilAccumulator;
+
+	void GetWeaponRecoilAmount(int weaponId, float& flPitchRecoil, float& flYawRecoil);
+	void DoRecoil(int iWpnID, float flWpnRecoil);
+	void SetRecoilAmount(float flPitchRecoil, float flYawRecoil);
+	void GetRecoilToAddThisFrame(float& flPitchRecoil, float& flYawRecoil);
 
 public:
 	// Shared functions

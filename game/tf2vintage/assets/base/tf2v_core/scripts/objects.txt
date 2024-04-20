@@ -8,11 +8,11 @@ objects
 		StatusName			"#TF_Object_Sentry"
 		BuildTime			10
 		MaxObjects			1
-		Cost				130
+		Cost				200
 		CostMultiplier		1
-		UpgradeCost			200
+		UpgradeCost			400
 		UpgradeDuration		1.5
-		MaxUpgradeLevel		0
+		MaxUpgradeLevel		2
 		BuilderWeaponName	"Sentry Gun"
 		BuilderPlacementString	"Place on ground"
 		SelectionSlot		5
@@ -29,7 +29,7 @@ objects
 		VisibleInWeaponSelection 0
 		ExplodeSound		"Building_Sentry.Explode"
 		ExplodeEffect		"ExplosionCore_buildings"
-		MetalToDropInGibs	60		
+		MetalToDropInGibs	100		
 		UpgradeSound		"Building_Sentrygun.Built"
 		BuildCount		1
 		RequiresOwnBuilder	0

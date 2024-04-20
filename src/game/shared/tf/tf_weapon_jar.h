@@ -17,6 +17,7 @@
 #define CTFJarMilk C_TFJarMilk
 #define CTFCleaver C_TFCleaver
 #define CTFJarGas C_TFJarGas
+#define CTFJarGrenade C_TFJarGrenade
 #endif
 
 class CTFJar : public CTFWeaponBaseGun
@@ -112,6 +113,30 @@ public:
 	virtual int			GetWeaponID( void ) const 			{ return TF_WEAPON_JAR_GAS; }
 	virtual const char* GetEffectLabelText( void )			{ return "#TF_Gas"; }
 	virtual float		InternalGetEffectBarRechargeTime()	{ return 30.0; }
+
+};
+
+
+//Final Combat grenade
+class CTFJarGrenade : public CTFJar
+{
+public:
+	DECLARE_CLASS(CTFJarGrenade, CTFJar);
+	DECLARE_NETWORKCLASS();
+	DECLARE_PREDICTABLE();
+
+	// Server specific.
+#ifdef GAME_DLL
+	DECLARE_DATADESC();
+#endif
+
+	virtual float		GetProjectileDamage(void) { return 200.0; }
+	virtual float		GetProjectileSpeed(void) { return 2000.0; }
+	virtual float		GetProjectileGravity(void) { return 0.5f; } // Same as pipebomb
+
+	virtual int			GetWeaponID(void) const { return TF_WEAPON_GRENADE_FRAG; }
+	virtual const char* GetEffectLabelText(void) { return "#TF_Frag"; }
+	virtual float		InternalGetEffectBarRechargeTime() { return 15.0; }
 
 };
 

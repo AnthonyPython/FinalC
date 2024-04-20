@@ -94,7 +94,7 @@ void CTFDefib::Smack( void )
 
 #ifdef GAME_DLL
 
-#define  TF_DEFIB_REVIVE_RADIUS 32
+#define  TF_DEFIB_REVIVE_RADIUS 48
 //-----------------------------------------------------------------------------
 // Purpose: Revives the dead player.
 // Output:  Whether anything interesting happens or not.

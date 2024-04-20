@@ -51,8 +51,8 @@ ConVar tf2v_use_new_wrangler_repair( "tf2v_use_new_wrangler_repair", "0", FCVAR_
 #define SENTRYGUN_MINS			Vector(-20, -20, 0)
 #define SENTRYGUN_MAXS			Vector( 20,  20, 66)
 
-#define SENTRYGUN_MAX_HEALTH		150
-#define MINI_SENTRYGUN_MAX_HEALTH	100
+#define SENTRYGUN_MAX_HEALTH		230
+#define MINI_SENTRYGUN_MAX_HEALTH	150
 
 #define SENTRYGUN_ADD_SHELLS	40
 #define SENTRYGUN_ADD_ROCKETS	8
@@ -99,6 +99,44 @@ enum target_ranges
 
 #define VECTOR_CONE_TF_SENTRY		Vector( 0.1, 0.1, 0 )
 
+class CSentryTouchTrigger : public CBaseTrigger
+{
+	DECLARE_CLASS(CSentryTouchTrigger, CBaseTrigger);
+
+public:
+	CSentryTouchTrigger() {}
+
+	void Spawn(void)
+	{
+		BaseClass::Spawn();
+		AddSpawnFlags(SF_TRIGGER_ALLOW_CLIENTS);
+		InitTrigger();
+	}
+
+	virtual void StartTouch(CBaseEntity* pEntity)
+	{
+		CBaseEntity* pParent = GetOwnerEntity();
+
+		if (pParent)
+		{
+			pParent->StartTouch(pEntity);
+		}
+	}
+
+	virtual void EndTouch(CBaseEntity* pEntity)
+	{
+		CBaseEntity* pParent = GetOwnerEntity();
+
+		if (pParent)
+		{
+			pParent->EndTouch(pEntity);
+		}
+	}
+};
+
+LINK_ENTITY_TO_CLASS(sentry_touch_trigger, CSentryTouchTrigger);
+
+
 //-----------------------------------------------------------------------------
 // Purpose: Only send the LocalWeaponData to the player carrying the weapon
 //-----------------------------------------------------------------------------
@@ -121,6 +159,28 @@ void *SendProxy_SendLocalObjectDataTable( const SendProp *pProp, const void *pSt
 }
 REGISTER_SEND_PROXY_NON_MODIFIED_POINTER( SendProxy_SendLocalObjectDataTable );
 
+//-----------------------------------------------------------------------------
+// Purpose: SendProxy that converts the Healing list UtlVector to entindices
+//-----------------------------------------------------------------------------
+void SendProxy_SHealingList(const SendProp* pProp, const void* pStruct, const void* pData, DVariant* pOut, int iElement, int objectID)
+{
+	CObjectSentrygun* pDispenser = (CObjectSentrygun*)pStruct;
+
+	// If this assertion fails, then SendProxyArrayLength_HealingArray must have failed.
+	Assert(iElement < pDispenser->m_hHealingTargets.Size());
+
+	CBaseEntity* pEnt = pDispenser->m_hHealingTargets[iElement].Get();
+	EHANDLE hOther = pEnt;
+
+	SendProxy_EHandleToInt(pProp, pStruct, &hOther, pOut, iElement, objectID);
+}
+
+int SendProxyArrayLength_SHealingArray(const void* pStruct, int objectID)
+{
+	CObjectSentrygun* pDispenser = (CObjectSentrygun*)pStruct;
+	return pDispenser->m_hHealingTargets.Count();
+}
+
 BEGIN_NETWORK_TABLE_NOBASE( CObjectSentrygun, DT_SentrygunLocalData )
 	SendPropInt( SENDINFO( m_iKills ), 12, SPROP_CHANGES_OFTEN ),
 	SendPropInt( SENDINFO( m_iAssists ), 12, SPROP_CHANGES_OFTEN ),
@@ -132,20 +192,47 @@ IMPLEMENT_SERVERCLASS_ST( CObjectSentrygun, DT_ObjectSentrygun )
 	SendPropInt( SENDINFO( m_iState ), Q_log2( SENTRY_NUM_STATES ) + 1, SPROP_UNSIGNED ),
 	SendPropVector( SENDINFO( m_vecEnd ) ),
 	SendPropDataTable( "SentrygunLocalData", 0, &REFERENCE_SEND_TABLE( DT_SentrygunLocalData ), SendProxy_SendLocalObjectDataTable ),
+	/* Dispenser stuff */
+	SendPropInt(SENDINFO(m_iAmmoMetal), 10),
+	//SendPropBool(SENDINFO(m_bStealthed)),
+	SendPropArray2(
+		SendProxyArrayLength_SHealingArray,
+		SendPropInt("healing_array_element", 0, SIZEOF_IGNORE, NUM_NETWORKED_EHANDLE_BITS, SPROP_UNSIGNED, SendProxy_SHealingList),
+		MAX_PLAYERS,
+		0,
+		"healing_array"
+	)
 END_SEND_TABLE()
 
 BEGIN_DATADESC( CObjectSentrygun )
-
+	DEFINE_KEYFIELD(m_szTriggerName, FIELD_STRING, "touch_trigger"),
+	DEFINE_THINKFUNC(RefillThink),
+	DEFINE_THINKFUNC(DispenseThink),
 END_DATADESC()
 
 LINK_ENTITY_TO_CLASS( obj_sentrygun, CObjectSentrygun );
 PRECACHE_REGISTER( obj_sentrygun );
 
-ConVar tf_sentrygun_damage( "tf_sentrygun_damage", "16", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
+
+// How much of each ammo gets added per refill
+#define SDISPENSER_REFILL_METAL_AMMO	40
+
+
+// How much ammo is given our per use
+#define SDISPENSER_DROP_PRIMARY		40
+#define SDISPENSER_DROP_SECONDARY	40
+#define SDISPENSER_DROP_METAL		40
+
+#define SREFILL_CONTEXT			"RefillContext"
+#define SDISPENSE_CONTEXT		"DispenseContext"
+
+ConVar obj_sentry_heal_rate("obj_sentry_heal_rate", "10.0", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY);
+
+ConVar tf_sentrygun_damage( "tf_sentrygun_damage", "12", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
 ConVar tf_sentrygun_ammocheat( "tf_sentrygun_ammocheat", "0", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
 ConVar tf_sentrygun_upgrade_per_hit( "tf_sentrygun_upgrade_per_hit", "25", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
-ConVar tf_sentrygun_newtarget_dist( "tf_sentrygun_newtarget_dist", "200", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
-ConVar tf_sentrygun_metal_per_shell( "tf_sentrygun_metal_per_shell", "1", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
+ConVar tf_sentrygun_newtarget_dist( "tf_sentrygun_newtarget_dist", "225", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
+ConVar tf_sentrygun_metal_per_shell( "tf_sentrygun_metal_per_shell", "2", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
 ConVar tf_sentrygun_metal_per_rocket( "tf_sentrygun_metal_per_rocket", "2", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
 ConVar tf_sentrygun_notarget( "tf_sentrygun_notarget", "0", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
 
@@ -157,6 +244,27 @@ CObjectSentrygun::CObjectSentrygun()
 	SetMaxHealth( SENTRYGUN_MAX_HEALTH );
 	m_iHealth = SENTRYGUN_MAX_HEALTH;
 	SetType( OBJ_SENTRYGUN );
+
+	m_hTouchingEntities.Purge();
+	m_bPlayRefillSound = true;
+	m_bPlayAmmoPickupSound = true;
+}
+
+CObjectSentrygun::~CObjectSentrygun()
+{
+	if (m_hTouchTrigger.Get())
+	{
+		UTIL_Remove(m_hTouchTrigger);
+	}
+
+	int iSize = m_hHealingTargets.Count();
+	for (int i = iSize - 1; i >= 0; i--)
+	{
+		EHANDLE hOther = m_hHealingTargets[i];
+
+		StopHealing(hOther);
+	}
+
 }
 
 //-----------------------------------------------------------------------------
@@ -217,6 +325,8 @@ void CObjectSentrygun::Spawn()
 		MakeMiniBuilding();
 	}
 
+	m_iAmmoMetal = 0;
+
 	SetContextThink( &CObjectSentrygun::SentryThink, gpGlobals->curtime + SENTRY_THINK_DELAY, SENTRYGUN_CONTEXT );
 }
 
@@ -232,6 +342,31 @@ void CObjectSentrygun::MakeCarriedObject( CTFPlayer *pPlayer )
 	m_iMaxAmmoShells = SENTRYGUN_MAX_SHELLS_1;
 	m_flHeavyBulletResist = SENTRYGUN_MINIGUN_RESIST_LVL_1;
 	SetViewOffset( SENTRYGUN_EYE_OFFSET_LEVEL_1 );
+
+	// Remove our healing trigger.
+	if (m_hTouchTrigger.Get())
+	{
+		UTIL_Remove(m_hTouchTrigger);
+		m_hTouchTrigger = NULL;
+	}
+
+	// Stop healing everyone.
+	for (int i = m_hTouchingEntities.Count() - 1; i >= 0; i--)
+	{
+		EHANDLE hEnt = m_hTouchingEntities[i];
+
+		CBaseEntity* pOther = hEnt.Get();
+
+		if (pOther)
+		{
+			EndTouch(pOther);
+		}
+	}
+
+	// Stop all thinking, we'll resume it once we get re-deployed.
+	SetContextThink(NULL, 0, SDISPENSE_CONTEXT);
+	SetContextThink(NULL, 0, SREFILL_CONTEXT);
+
 	BaseClass::MakeCarriedObject( pPlayer );
 }
 
@@ -385,6 +520,11 @@ bool CObjectSentrygun::CanBeUpgraded( CTFPlayer *pPlayer )
 {
 	if ( !m_bWasMapPlaced || HasSpawnFlags( SF_OBJ_UPGRADABLE ) )
 	{
+		if (GetUpgradeLevel() >= 2)
+		{
+			return false;
+		}
+
 		return BaseClass::CanBeUpgraded( pPlayer );
 	}
 
@@ -448,8 +588,413 @@ void CObjectSentrygun::OnGoActive( void )
 	m_iAttachments[SENTRYGUN_ATTACHMENT_ROCKET_L] = 0;
 	m_iAttachments[SENTRYGUN_ATTACHMENT_ROCKET_R] = 0;
 
+	if (!m_bCarryDeploy)
+	{
+		// Put some ammo in the Dispenser
+		m_iAmmoMetal = 25;
+	}
+
+	// Begin thinking
+	SetContextThink(&CObjectSentrygun::RefillThink, gpGlobals->curtime + 3, SREFILL_CONTEXT);
+	SetContextThink(&CObjectSentrygun::DispenseThink, gpGlobals->curtime + 0.1, SDISPENSE_CONTEXT);
+
+	m_flNextAmmoDispense = gpGlobals->curtime + 0.5;
+
+	CSentryTouchTrigger* pTriggerEnt;
+
+	
+	{
+		pTriggerEnt = dynamic_cast<CSentryTouchTrigger*>(CBaseEntity::Create("sentry_touch_trigger", GetAbsOrigin(), vec3_angle, this));
+		if (pTriggerEnt)
+		{
+			pTriggerEnt->SetSolid(SOLID_BBOX);
+			UTIL_SetSize(pTriggerEnt, Vector(-70, -70, -70), Vector(70, 70, 70));
+			m_hTouchTrigger = pTriggerEnt;
+		}
+	}
+
 	BaseClass::OnGoActive();
 
+}
+
+
+int CObjectSentrygun::DispenseMetal(CTFPlayer* pPlayer)
+{
+	// Cart dispenser has infinite metal.
+	int iMetalToGive = SDISPENSER_DROP_METAL + 10 * (GetUpgradeLevel() - 1);
+
+	if ((GetObjectFlags() & OF_DOESNT_HAVE_A_MODEL) == 0)
+		iMetalToGive = Min(m_iAmmoMetal.Get(), iMetalToGive);
+
+	int iMetal = pPlayer->GiveAmmo(iMetalToGive, TF_AMMO_METAL, !m_bPlayAmmoPickupSound, TF_AMMO_SOURCE_DISPENSER);
+
+	if ((GetObjectFlags() & OF_DOESNT_HAVE_A_MODEL) == 0)
+		m_iAmmoMetal -= iMetal;
+
+	return iMetal;
+}
+
+bool CObjectSentrygun::DispenseAmmo(CTFPlayer* pPlayer)
+{
+	int iTotalPickedUp = 0;
+	float flAmmoRate = GetAmmoRate();
+
+	// Double the ammo if the person is directly touching the dispenser.
+	/*if (tf2v_use_dispenser_touch.GetBool())
+	{
+		// for each player in touching list
+		for (int i = m_hTouchingEntities.Count() - 1; i >= 0; i--)
+		{
+			// See if this is our player
+			EHANDLE hEnt = m_hTouchingEntities[i];
+
+			CBaseEntity* pOther = hEnt.Get();
+			CTFPlayer* pToucher;
+			pToucher = ToTFPlayer(pOther);
+			if (pToucher && pPlayer == pToucher)
+			{
+				flAmmoRate *= 2;
+				break;
+			}
+		}
+	}*/
+
+	int nNoPrimaryAmmoFromDispensers = 0;
+	CALL_ATTRIB_HOOK_INT_ON_OTHER(pPlayer->GetActiveWeapon(), nNoPrimaryAmmoFromDispensers, no_primary_ammo_from_dispensers);
+
+	if (nNoPrimaryAmmoFromDispensers == 0)
+	{
+		// primary
+		int iPrimary = pPlayer->GiveAmmo(floor(pPlayer->GetMaxAmmo(TF_AMMO_PRIMARY) * flAmmoRate), TF_AMMO_PRIMARY, !m_bPlayAmmoPickupSound, TF_AMMO_SOURCE_DISPENSER);
+		iTotalPickedUp += iPrimary;
+	}
+
+	// secondary
+	int iSecondary = pPlayer->GiveAmmo(floor(pPlayer->GetMaxAmmo(TF_AMMO_SECONDARY) * flAmmoRate), TF_AMMO_SECONDARY, !m_bPlayAmmoPickupSound, TF_AMMO_SOURCE_DISPENSER);
+	iTotalPickedUp += iSecondary;
+
+	// metal
+	int nNoMetalFromDispenserWhileActive = 0;
+	CALL_ATTRIB_HOOK_INT_ON_OTHER(pPlayer->GetActiveWeapon(), nNoMetalFromDispenserWhileActive, no_metal_from_dispensers_while_active);
+	if (nNoMetalFromDispenserWhileActive == 0)
+	{
+		iTotalPickedUp += DispenseMetal(pPlayer);;
+	}
+
+	if (iTotalPickedUp > 0 && m_bPlayAmmoPickupSound)
+	{
+		if (pPlayer->m_Shared.InCond(TF_COND_STEALTHED))
+		{
+			CSingleUserRecipientFilter filter(pPlayer);
+			EmitSound(filter, entindex(), "BaseCombatCharacter.AmmoPickup");
+		}
+		else
+			EmitSound("BaseCombatCharacter.AmmoPickup");
+		return true;
+	}
+
+	// return false if we didn't pick up anything
+	return false;
+}
+
+/*int CObjectSentrygun::GetBaseHealth(void)
+{
+	return SDISPENSER_MAX_HEALTH;
+}*/
+
+float CObjectSentrygun::GetDispenserRadius(void)
+{
+	float flRadius = 64.0f;
+
+	if (GetOwner())
+		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(GetOwner(), flRadius, mult_dispenser_radius);
+
+	return flRadius;
+}
+
+float CObjectSentrygun::GetHealRate(void)
+{
+	float flHealRate = g_flDispenserHealRates[GetUpgradeLevel() - 1];
+
+	if (GetOwner())
+		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(GetOwner(), flHealRate, mult_dispenser_rate);
+
+	return flHealRate;
+}
+
+float CObjectSentrygun::GetAmmoRate(void)
+{
+	float flAmmoRate = g_flDispenserAmmoRates[GetUpgradeLevel() - 1];
+
+	if (GetOwner())
+		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(GetOwner(), flAmmoRate, mult_dispenser_rate);
+
+	return flAmmoRate;
+}
+
+void CObjectSentrygun::RefillThink(void)
+{
+	if (GetObjectFlags() & OF_DOESNT_HAVE_A_MODEL)
+		return;
+
+	if (IsDisabled() || IsUpgrading() || IsRedeploying())
+	{
+		// Hit a refill time while disabled, so do the next refill ASAP.
+		SetContextThink(&CObjectSentrygun::RefillThink, gpGlobals->curtime + 0.1, SREFILL_CONTEXT);
+		return;
+	}
+
+	// Auto-refill half the amount as tfc, but twice as often
+	if (m_iAmmoMetal < DISPENSER_MAX_METAL_AMMO)
+	{
+		int iToRefill = DISPENSER_MAX_METAL_AMMO * (0.1 + 0.025 * (GetUpgradeLevel() - 1));
+
+		if (GetOwner())
+			CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(GetOwner(), iToRefill, mult_dispenser_rate);
+
+		m_iAmmoMetal = Min(m_iAmmoMetal + iToRefill, DISPENSER_MAX_METAL_AMMO);
+
+		if (m_bPlayRefillSound)
+			EmitSound("Building_Dispenser.GenerateMetal");
+	}
+
+	SetContextThink(&CObjectSentrygun::RefillThink, gpGlobals->curtime + 6, SREFILL_CONTEXT);
+}
+
+//-----------------------------------------------------------------------------
+// Generate ammo over time
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::DispenseThink(void)
+{
+	if (IsDisabled() || IsUpgrading() || IsRedeploying())
+	{
+		// Don't heal or dispense ammo
+		SetContextThink(&CObjectSentrygun::DispenseThink, gpGlobals->curtime + 0.1, SDISPENSE_CONTEXT);
+
+		// stop healing everyone
+		for (int i = m_hHealingTargets.Count() - 1; i >= 0; i--)
+		{
+			EHANDLE hEnt = m_hHealingTargets[i];
+
+			CBaseEntity* pOther = hEnt.Get();
+
+			if (pOther)
+			{
+				StopHealing(pOther);
+			}
+		}
+
+		return;
+	}
+
+	if (m_flNextAmmoDispense <= gpGlobals->curtime)
+	{
+		int iNumNearbyPlayers = 0;
+
+		// find players in sphere, that are visible
+		static float flRadius = GetDispenserRadius();
+		Vector vecOrigin = GetAbsOrigin() + Vector(0, 0, 32);
+
+		CBaseEntity* pListOfNearbyEntities[32];
+		int iNumberOfNearbyEntities = UTIL_EntitiesInSphere(pListOfNearbyEntities, 32, vecOrigin, flRadius, FL_CLIENT);
+		for (int i = 0; i < iNumberOfNearbyEntities; i++)
+		{
+			CTFPlayer* pPlayer = ToTFPlayer(pListOfNearbyEntities[i]);
+
+			if (!pPlayer || !pPlayer->IsAlive() || !CouldHealTarget(pPlayer))
+				continue;
+
+			DispenseAmmo(pPlayer);
+
+			iNumNearbyPlayers++;
+		}
+
+		// Try to dispense more often when no players are around so we 
+		// give it as soon as possible when a new player shows up
+		m_flNextAmmoDispense = gpGlobals->curtime + ((iNumNearbyPlayers > 0) ? 1.0 : 0.1);
+	}
+
+	ResetHealingTargets();
+
+	SetContextThink(&CObjectSentrygun::DispenseThink, gpGlobals->curtime + 0.1, SDISPENSE_CONTEXT);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::ResetHealingTargets(void)
+{
+	// for each player in touching list
+	int iSize = m_hTouchingEntities.Count();
+	for (int i = iSize - 1; i >= 0; i--)
+	{
+		EHANDLE hOther = m_hTouchingEntities[i];
+
+		CBaseEntity* pEnt = hOther.Get();
+		bool bHealingTarget = IsHealingTarget(pEnt);
+		bool bValidHealTarget = CouldHealTarget(pEnt);
+
+		/*CTFPlayer* pPlayer;
+		pPlayer = ToTFPlayer(pEnt);
+		if (pPlayer)
+		{
+			if (pPlayer->m_Shared.InCond(TF_COND_STEALTHED) && m_flNextStealthThink < gpGlobals->curtime)
+			{
+				m_bStealthed = true;
+				NetworkStateChanged();
+				m_flNextStealthThink = gpGlobals->curtime + 1.0f;
+			}
+		}*/
+
+		if (bHealingTarget && !bValidHealTarget)
+		{
+			// if we can't see them, remove them from healing list
+			// does nothing if we are not healing them already
+			StopHealing(pEnt);
+		}
+		else if (!bHealingTarget && bValidHealTarget)
+		{
+			// if we can see them, add to healing list	
+			// does nothing if we are healing them already
+			StartHealing(pEnt);
+		}
+	}
+
+	/*if (m_flNextStealthThink < gpGlobals->curtime)
+	{
+		if (m_bStealthed)
+			NetworkStateChanged();
+		m_bStealthed = false;
+	}*/
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::StartTouch(CBaseEntity* pOther)
+{
+	// add to touching entities
+	EHANDLE hOther = pOther;
+	m_hTouchingEntities.AddToTail(hOther);
+
+	if (!IsBuilding() && !IsDisabled() && !IsRedeploying() && CouldHealTarget(pOther) && !IsHealingTarget(pOther))
+	{
+		// try to start healing them
+		StartHealing(pOther);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::EndTouch(CBaseEntity* pOther)
+{
+	// remove from touching entities
+	EHANDLE hOther = pOther;
+	m_hTouchingEntities.FindAndRemove(hOther);
+
+	// remove from healing list
+	StopHealing(pOther);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Try to start healing this target
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::StartHealing(CBaseEntity* pOther)
+{
+	AddHealingTarget(pOther);
+
+	CTFPlayer* pPlayer = ToTFPlayer(pOther);
+
+	if (pPlayer)
+	{
+		float flHealRate = GetHealRate();
+		pPlayer->m_Shared.Heal(this, flHealRate, 1.0f, 1.0f, true, GetBuilder());
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Stop healing this target
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::StopHealing(CBaseEntity* pOther)
+{
+	bool bFound = false;
+
+	EHANDLE hOther = pOther;
+	bFound = m_hHealingTargets.FindAndRemove(hOther);
+	NetworkStateChanged();
+
+	if (bFound)
+	{
+		CTFPlayer* pPlayer = ToTFPlayer(pOther);
+
+		if (pPlayer)
+		{
+			pPlayer->m_Shared.StopHealing(this);
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Is this a valid heal target? and not already healing them?
+//-----------------------------------------------------------------------------
+bool CObjectSentrygun::CouldHealTarget(CBaseEntity* pTarget)
+{
+	if (!HasSpawnFlags(SF_IGNORE_LOS) && !pTarget->FVisible(this, MASK_BLOCKLOS))
+		return false;
+
+	if (pTarget->IsPlayer() && pTarget->IsAlive())
+	{
+		CTFPlayer* pTFPlayer = ToTFPlayer(pTarget);
+
+		// don't heal enemies unless they are disguised as our team
+		int iTeam = GetTeamNumber();
+		int iPlayerTeam = pTFPlayer->GetTeamNumber();
+
+		if (iPlayerTeam != iTeam && pTFPlayer->m_Shared.InCond(TF_COND_DISGUISED) && !HasSpawnFlags(SF_NO_DISGUISED_SPY_HEALING))
+		{
+			iPlayerTeam = pTFPlayer->m_Shared.GetDisguiseTeam();
+		}
+
+		if (iPlayerTeam != iTeam)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::AddHealingTarget(CBaseEntity* pOther)
+{
+	// add to tail
+	EHANDLE hOther = pOther;
+	m_hHealingTargets.AddToTail(hOther);
+	NetworkStateChanged();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CObjectSentrygun::RemoveHealingTarget(CBaseEntity* pOther)
+{
+	// remove
+	EHANDLE hOther = pOther;
+	m_hHealingTargets.FindAndRemove(hOther);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Are we healing this target already
+//-----------------------------------------------------------------------------
+bool CObjectSentrygun::IsHealingTarget(CBaseEntity* pTarget)
+{
+	EHANDLE hOther = pTarget;
+	return m_hHealingTargets.HasElement(hOther);
 }
 
 //-----------------------------------------------------------------------------
@@ -503,11 +1048,17 @@ void CObjectSentrygun::Precache()
 	PrecacheScriptSound( "Building_Sentrygun.ShaftFire2" );
 	PrecacheScriptSound( "Building_Sentrygun.ShaftFire3" );
 
+	PrecacheScriptSound("Building_Dispenser.GenerateMetal");
+	PrecacheScriptSound("Building_Dispenser.Heal");
+
+	
+
 	PrecacheParticleSystem( "sentrydamage_1" );
 	PrecacheParticleSystem( "sentrydamage_2" );
 	PrecacheParticleSystem( "sentrydamage_3" );
 	PrecacheParticleSystem( "sentrydamage_4" );
 	PrecacheParticleSystem( "turret_shield" );
+	PrecacheTeamParticles("dispenser_heal_%s");
 }
 
 //-----------------------------------------------------------------------------
@@ -515,6 +1066,8 @@ void CObjectSentrygun::Precache()
 //-----------------------------------------------------------------------------
 void CObjectSentrygun::StartUpgrading( void )
 {
+	ResetHealingTargets();
+
 	BaseClass::StartUpgrading();
 
 	int iAmmoShells = m_iAmmoShells;
@@ -801,7 +1354,7 @@ bool CObjectSentrygun::CheckUpgradeOnHit( CTFPlayer *pPlayer )
 
 int CObjectSentrygun::GetBaseHealth( void )
 {
-	return 150;
+	return 230;
 }
 
 //-----------------------------------------------------------------------------
