@@ -2025,8 +2025,43 @@ void CTFPlayer::GiveDefaultItems()
 
 	bool bMiniBuilding = nMiniBuilding ? true : false;
 
+
+	int nModPDA = 0;
+	CALL_ATTRIB_HOOK_INT(nModPDA, set_weapon_mode);
+
+
+
+
+	// Edge case incase the econ shits out, so we should make sure the medpda can still work regradless of econ attributes.
+	for (int i = 0; i < MAX_ITEMS; i++)
+	{
+		CTFWeaponBase* pWeapon = dynamic_cast<CTFWeaponBase*>(Weapon_GetSlot(i));
+		if (pWeapon)
+		{
+			CEconEntity* pEcon = dynamic_cast<CEconEntity*>(pWeapon);
+			if (pEcon)
+			{
+				if (nModPDA == 0)
+				{
+					if (pEcon->GetItemID() == 176)
+					{
+						nModPDA = 1;
+						break;
+					}
+				}
+				
+			}
+
+		}
+	}
+
+
+	bool bModPDA = nModPDA ? true : false;
+
+	bool bcurrentmodPDA = m_Shared.m_bmodPDA ? true : false;
+
 	// If we've switched to/from gunslinger destroy all of our buildings
-	if ( m_Shared.m_bGunslinger != bMiniBuilding )
+	if ((m_Shared.m_bGunslinger != bMiniBuilding) || (bcurrentmodPDA != bModPDA) )
 	{
 		// blow up any carried buildings
 		if ( IsPlayerClass( TF_CLASS_ENGINEER ) && m_Shared.GetCarriedObject() )
@@ -2057,6 +2092,7 @@ void CTFPlayer::GiveDefaultItems()
 	}
 
 	m_Shared.m_bGunslinger = bMiniBuilding;
+	m_Shared.m_bmodPDA = nModPDA;
 }
 
 //-----------------------------------------------------------------------------
@@ -5081,7 +5117,7 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 						CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pWpn, flDamage, headshot_damage_modify );
 
 						
-						if (!pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_DECAP) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_CLASSIC) || !pWpn->IsWeapon(TF_WEAPON_ROCKETLAUNCHER) || pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) || !pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER))
+						if (!pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_DECAP) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_CLASSIC) || !pWpn->IsWeapon(TF_WEAPON_ROCKETLAUNCHER) || pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) || !pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) || !pWpn->IsWeapon(TF_WEAPON_FLAMETHROWER))
 						{
 							damageBits &= ~DMG_CRITICAL;
 							damageBits |= DMG_MINICRITICAL;

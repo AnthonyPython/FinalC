@@ -786,8 +786,8 @@ void CObjectSentrygun::DispenseThink(void)
 
 		return;
 	}
-
-	if (m_flNextAmmoDispense <= gpGlobals->curtime)
+	
+	if ( ( m_flNextAmmoDispense <= gpGlobals->curtime) && ( GetBuilder()->ModPDA() == 0 || GetBuilder()->ModPDA() == 3) )
 	{
 		int iNumNearbyPlayers = 0;
 
@@ -801,7 +801,7 @@ void CObjectSentrygun::DispenseThink(void)
 		{
 			CTFPlayer* pPlayer = ToTFPlayer(pListOfNearbyEntities[i]);
 
-			if (!pPlayer || !pPlayer->IsAlive() || !CouldHealTarget(pPlayer))
+			if (!pPlayer || !pPlayer->IsAlive() || !CouldDispenseAmmoTarget(pPlayer))
 				continue;
 
 			DispenseAmmo(pPlayer);
@@ -879,7 +879,6 @@ void CObjectSentrygun::StartTouch(CBaseEntity* pOther)
 
 	if (!IsBuilding() && !IsDisabled() && !IsRedeploying() && CouldHealTarget(pOther) && !IsHealingTarget(pOther))
 	{
-		// try to start healing them
 		StartHealing(pOther);
 	}
 }
@@ -902,6 +901,7 @@ void CObjectSentrygun::EndTouch(CBaseEntity* pOther)
 //-----------------------------------------------------------------------------
 void CObjectSentrygun::StartHealing(CBaseEntity* pOther)
 {
+
 	AddHealingTarget(pOther);
 
 	CTFPlayer* pPlayer = ToTFPlayer(pOther);
@@ -943,6 +943,11 @@ bool CObjectSentrygun::CouldHealTarget(CBaseEntity* pTarget)
 	if (!HasSpawnFlags(SF_IGNORE_LOS) && !pTarget->FVisible(this, MASK_BLOCKLOS))
 		return false;
 
+
+	// we want a early out if we aren't suppose to heal people.
+	if (GetBuilder()->ModPDA() == 0)
+		return false;
+
 	if (pTarget->IsPlayer() && pTarget->IsAlive())
 	{
 		CTFPlayer* pTFPlayer = ToTFPlayer(pTarget);
@@ -960,6 +965,44 @@ bool CObjectSentrygun::CouldHealTarget(CBaseEntity* pTarget)
 		{
 			return false;
 		}
+
+
+		return true;
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Is this a valid heal target? and not already healing them?
+//-----------------------------------------------------------------------------
+bool CObjectSentrygun::CouldDispenseAmmoTarget(CBaseEntity* pTarget)
+{
+	if (!HasSpawnFlags(SF_IGNORE_LOS) && !pTarget->FVisible(this, MASK_BLOCKLOS))
+		return false;
+
+	// we want a early out if we aren't suppose to get ammo/metal to people.
+	if (GetBuilder()->ModPDA() == 1)
+		return false;
+
+	if (pTarget->IsPlayer() && pTarget->IsAlive())
+	{
+		CTFPlayer* pTFPlayer = ToTFPlayer(pTarget);
+
+		// don't heal enemies unless they are disguised as our team
+		int iTeam = GetTeamNumber();
+		int iPlayerTeam = pTFPlayer->GetTeamNumber();
+
+		if (iPlayerTeam != iTeam && pTFPlayer->m_Shared.InCond(TF_COND_DISGUISED) && !HasSpawnFlags(SF_NO_DISGUISED_SPY_HEALING))
+		{
+			iPlayerTeam = pTFPlayer->m_Shared.GetDisguiseTeam();
+		}
+
+		if (iPlayerTeam != iTeam)
+		{
+			return false;
+		}
+
 
 		return true;
 	}

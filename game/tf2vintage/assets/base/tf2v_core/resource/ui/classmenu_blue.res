@@ -85,35 +85,6 @@
 		"fgcolor"		"TanDark"
 		"fgcolor_lodef"	"TanLight"
 	}
-	"scout_blue"
-	{
-		"ControlName"		"ImageButton"
-		"fieldName"			"scout_blue"
-		"xpos"				"c-300"
-		"xpos_hidef"				"c-290"
-		"xpos_lodef"		"c-265"
-		"ypos"				"-5"
-		"ypos_lodef"				"9"
-		"ypos_hidef"				"0"
-		"zpos"				"6"
-		"wide"				"50"
-		"tall"				"100"
-		"autoResize"		"0"
-		"pinCorner"			"2"
-		"visible"			"1"
-		"enabled"			"1"
-		"tabPosition"		"0"
-		"labelText"			"&1"	[$WIN32]
-		"labelText"			""		[$X360]
-		"textAlignment"		"south-west"
-		"Command"			"joinclass scout"
-		"Default"			"0"
-		"font"				"MenuKeys"
-		"fgcolor"			"TanDark"
-		"scaleImage"		"1"
-		"activeimage"		"class_sel_sm_scout_blu"
-		"inactiveimage"		"class_sel_sm_scout_inactive"
-	}
 	"soldier_blue"
 	{
 		"ControlName"		"ImageButton"
@@ -367,35 +338,6 @@
 		"activeimage"		"class_sel_sm_sniper_blu"
 		"inactiveimage"		"class_sel_sm_sniper_inactive"
 	}
-	"spy_blue"
-	{
-		"ControlName"		"ImageButton"
-		"fieldName"			"spy_blue"
-		"xpos"				"c178"
-		"xpos_hidef"				"c170"
-		"xpos_lodef"		"c145"
-		"ypos"				"-5"
-		"ypos_lodef"				"9"
-		"ypos_hidef"				"0"
-		"zpos"				"6"
-		"wide"				"50"
-		"tall"				"100"
-		"autoResize"		"0"
-		"pinCorner"			"2"
-		"visible"			"1"
-		"enabled"			"1"
-		"tabPosition"		"0"
-		"labelText"			"&9"	[$WIN32]
-		"labelText"			""		[$X360]
-		"textAlignment"		"south-west"
-		"Command"			"joinclass spy"
-		"Default"			"0"
-		"font"				"MenuKeys"
-		"fgcolor"			"TanDark"
-		"scaleImage"		"1"
-		"activeimage"		"class_sel_sm_spy_blu"
-		"inactiveimage"		"class_sel_sm_spy_inactive"
-	}	
 
 	"ClassMenuSelect"
 	{
@@ -818,26 +760,6 @@
 		"font"			"MenuClassBuckets"
 		"fgcolor"		"TanLight"
 	}						
-	
-	"numSpy" [$WIN32]
-	{
-		"ControlName"	"CExLabel"
-		"fieldName"		"numSpy"
-		"xpos"			"c178"
-		"ypos"			"10"
-		"zpos"			"5"
-		"wide"			"50"
-		"tall"			"12"
-		"autoResize"	"1"
-		"pinCorner"		"2"
-		"visible"		"1"
-		"enabled"		"1"
-		"tabPosition"	"0"
-		"labelText"		"%numSpy%"
-		"textAlignment"	"center"
-		"font"			"MenuClassBuckets"
-		"fgcolor"		"TanLight"
-	}	
 	"LoadoutButton" [$WIN32] 
 	{
 		"ControlName"	"CExButton"

@@ -607,6 +607,7 @@ public:
 
 	// Gunslinger
 	bool				HasGunslinger( void ) { return m_Shared.m_bGunslinger; }
+	int				ModPDA( void ) { return m_Shared.m_bmodPDA; }
 
 	CountdownTimer m_purgatoryDuration;
 

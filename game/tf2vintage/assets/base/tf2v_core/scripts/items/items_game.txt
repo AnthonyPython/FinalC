@@ -1384,12 +1384,42 @@
 				}
 			}
 		}
+		"weapon_fatman_club"
+		{
+			"item_class"	"tf_weapon_club"
+			"item_type_name"	"#TF_Weapon_Club"
+			"item_name"	"#TF_Weapon_Club"
+			"item_slot"	"melee"
+			"anim_slot" "MELEE_ALLCLASS"
+			"anim_slot" "MELEE_ALLCLASS"
+			"image_inventory"	"backpack/weapons/w_models/w_machete"
+			"model_player"	"models/weapons/c_models/c_machete/c_machete.mdl"
+			"used_by_classes"
+			{
+				"heavy"	"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"		"10 0 -6"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
+			}
+			"attributes"
+			{
+				"allowed in medieval mode"
+				{
+					"attribute_class"	"allowed_in_medieval_mode"
+					"value"	"1"
+				}
+			}
+		}
 		"weapon_fists"
 		{
 			"item_class"	"tf_weapon_fists"
 			"item_type_name"	"#TF_Weapon_Fists"
 			"item_name"	"#TF_Weapon_Fists"
 			"item_slot"	"melee"
+			"show_in_armory" "0"
 			"image_inventory"	"backpack/weapons/v_models/v_fist_heavy"
 			"model_player"	""
 			"used_by_classes"
@@ -1913,6 +1943,7 @@
 			"item_slot"	"primary"
 			"image_inventory"	"backpack/weapons/w_models/w_syringegun"
 			"model_player"	"models/weapons/c_models/c_syringegun/c_syringegun.mdl"
+			"show_in_armory" "0"
 			"used_by_classes"
 			{
 				"medic"	"1"
@@ -4024,6 +4055,7 @@
 			"item_slot"	"primary"
 			"image_inventory"	"backpack/workshop/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow"
 			"model_player"	"models/workshop/weapons/c_models/c_crusaders_crossbow/c_crusaders_crossbow.mdl"
+			"baseitem"	"1"
 			"used_by_classes"
 			{
 				"medic"	"1"
@@ -4293,7 +4325,8 @@
 			"prefab"	"weapon_fists"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
+			"show_in_armory" "0"
+			"baseitem"	"0"
 			"attributes"
 			{
 				"special taunt"
@@ -4417,7 +4450,7 @@
 			"prefab"	"weapon_syringegun"
 			"item_quality" "normal"
 			"year"			"2007"
-			"baseitem"	"1"
+			
 		}
 		"18"
 		{
@@ -5662,6 +5695,35 @@
 			"item_name"	"Defibulator"
 			"image_inventory"	"backpack/workshop/weapons/c_models/c_uberneedle/c_uberneedle"
 			"model_player"	"models/workshop/weapons/c_models/c_uberneedle/c_uberneedle.mdl"
+		}
+		
+		"175"
+		{
+			"name"	"fishy"
+			"prefab"	"weapon_fatman_club"
+			"year"			"2011"
+			"item_quality" 			"vintage"
+			"anim_slot" "MELEE_ALLCLASS"
+			"item_slot"	"melee"
+			"anim_slot" "MELEE_ALLCLASS"
+			"baseitem" "1"
+		}
+		"176"
+		{
+			"name"	"medpda"
+			"prefab"	"weapon_pda_engineer_build"
+			"year"			"2011"
+			"item_quality" 			"vintage"
+			"item_name"	"medpda"
+			"show_in_armory" "1"
+			"attributes"
+			{
+				"Sentry gives health"
+				{
+					"attribute_class"	"set_weapon_mode"
+					"value" "1"
+				}
+			}
 		}
 		"214"
 		{
@@ -18502,6 +18564,16 @@
 			"description_format"	"value_is_percentage"
 			"hidden"	"0"
 			"effect_type"	"positive"
+			"stored_as_integer"	"0"
+		}
+		"3035"
+		{
+			"name"	"Sentry gives health"
+			"attribute_class"	"set_weapon_mode"
+			"description_string"	"Sentry gives health instead of ammo."
+			"description_format"	"value_is_additive"
+			"hidden"	"0"
+			"effect_type"	"neutral"
 			"stored_as_integer"	"0"
 		}
 		"10001"

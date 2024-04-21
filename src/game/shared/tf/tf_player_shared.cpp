@@ -265,6 +265,7 @@ BEGIN_RECV_TABLE_NOBASE( CTFPlayerShared, DT_TFPlayerShared )
 	RecvPropInt( RECVINFO( m_iDisguiseMaxHealth ) ),
 	RecvPropFloat( RECVINFO( m_flDisguiseChargeLevel ) ),
 	RecvPropDataTable( RECVINFO_DT( m_DisguiseItem ), 0, &REFERENCE_RECV_TABLE( DT_ScriptCreatedItem ) ),
+	RecvPropBool(RECVINFO(m_bmodPDA)),
 	// Local Data.
 	RecvPropDataTable( "tfsharedlocaldata", 0, 0, &REFERENCE_RECV_TABLE( DT_TFPlayerSharedLocal ) ),
 END_RECV_TABLE()
@@ -353,6 +354,7 @@ BEGIN_SEND_TABLE_NOBASE( CTFPlayerShared, DT_TFPlayerShared )
 	SendPropInt( SENDINFO( m_iDisguiseMaxHealth ), 10 ),
 	SendPropFloat( SENDINFO( m_flDisguiseChargeLevel ), 0, SPROP_NOSCALE ),
 	SendPropDataTable( SENDINFO_DT( m_DisguiseItem ), &REFERENCE_SEND_TABLE( DT_ScriptCreatedItem ) ),
+	SendPropBool(SENDINFO(m_bmodPDA)),
 	// Local Data.
 	SendPropDataTable( "tfsharedlocaldata", 0, &REFERENCE_SEND_TABLE( DT_TFPlayerSharedLocal ), SendProxy_SendLocalDataTable ),
 END_SEND_TABLE()
@@ -390,6 +392,7 @@ CTFPlayerShared::CTFPlayerShared()
 	m_bArenaSpectator = false;
 
 	m_bGunslinger = false;
+	m_bmodPDA = 0;
 	
 	ResetMeters();
 

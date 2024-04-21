@@ -773,6 +773,7 @@ private:
 
 	// Gunslinger
 	CNetworkVar( bool, m_bGunslinger );
+	CNetworkVar( int, m_bmodPDA );
 
 	CNetworkVar( bool, m_bInUpgradeZone );
 

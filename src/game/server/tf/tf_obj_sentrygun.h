@@ -132,6 +132,7 @@ public:
 	bool IsHealingTarget(CBaseEntity* pTarget);
 
 	bool CouldHealTarget(CBaseEntity* pTarget);
+	bool CouldDispenseAmmoTarget(CBaseEntity* pTarget);
 
 	Vector GetHealOrigin(void);
 

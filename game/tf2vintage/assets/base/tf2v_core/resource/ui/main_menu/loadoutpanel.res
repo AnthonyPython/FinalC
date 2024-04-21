@@ -608,7 +608,7 @@
 		"tall"			"10"
 		"image"			"vgui/class_icons/scout"
 		"visible"		"0"
-		"enabled"		"1"
+		"enabled"		"0"
 	}
 	
 	"classselection"
@@ -630,8 +630,8 @@
 			"ControlName"		"CTFAdvButton"
 			"fieldName"			"scout_blue"
 			"scaleimage"		"0"	
-			"visible"			"1"
-			"enabled"			"1"
+			"visible"			"0"
+			"enabled"			"0"
 			"bordervisible"		"0"		
 			"command"			"select_scout"
 			
@@ -830,8 +830,8 @@
 			"ControlName"		"CTFAdvButton"
 			"fieldName"			"spy_blue"
 			"scaleimage"		"0"	
-			"visible"			"1"
-			"enabled"			"1"
+			"visible"			"0"
+			"enabled"			"0"
 			"bordervisible"		"0"	
 			"command"			"select_spy"
 			
