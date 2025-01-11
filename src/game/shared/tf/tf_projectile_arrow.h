@@ -134,6 +134,7 @@ protected:
 	bool		m_bWhizzed;
 	float       m_flCheckNearMiss;
 	CNewParticleEffect *m_pCritEffect;
+	CNewParticleEffect *m_pTrailEffect;
 	int         m_iDeflectedParity;
 #endif
 };

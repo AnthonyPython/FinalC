@@ -32,7 +32,7 @@ public:
 
 
 #ifdef GAME_DLL
-	virtual bool		CanHeadshot( void )                        { return false; }
+	virtual bool		CanHeadshot( void )                        { return true; }
 	virtual void		ImpactTeamPlayer( CTFPlayer *pTarget );
 
 	virtual float		GetCollideWithTeammatesDelay( void ) const { return 0.0; }

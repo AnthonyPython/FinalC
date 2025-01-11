@@ -5427,7 +5427,8 @@ bool CTFGameRules::CanUpgradeWithAttrib( CTFPlayer *pPlayer, int iItemSlot, attr
 				int iProjectile = pGun->GetWeaponProjectileType();
 				return ( iProjectile == TF_PROJECTILE_BULLET || iProjectile == TF_PROJECTILE_ARROW || 
 						 iProjectile == TF_PROJECTILE_HEALING_BOLT || iProjectile == TF_PROJECTILE_FESTIVE_ARROW || 
-						 iProjectile == TF_PROJECTILE_FESTIVE_HEALING_BOLT );
+						 iProjectile == TF_PROJECTILE_FESTIVE_HEALING_BOLT || iProjectile == TF_PROJECTILE_NAIL 
+					|| iProjectile == TF_PROJECTILE_SYRINGE || iProjectile == TF_PROJECTILE_DART);
 			}
 
 			return false;

@@ -112,7 +112,7 @@ ConVar	spec_freeze_distance_max( "spec_freeze_distance_max", "200", FCVAR_CHEAT,
 #endif
 
 static ConVar	cl_first_person_uses_world_model ( "cl_first_person_uses_world_model", "0", FCVAR_ARCHIVE, "Causes the third person model to be drawn instead of the view model" );
-static ConVar	tf2v_use_fp_legs("tf2v_use_fp_legs", "0", FCVAR_ARCHIVE | FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT, "EXPERIMENTAL: Displays the player's legs when in firstperson mode.");
+static ConVar	tf2v_use_fp_legs("tf2v_use_fp_legs", "1", FCVAR_ARCHIVE , "EXPERIMENTAL: Displays the player's legs when in firstperson mode.");
 
 
 ConVar demo_fov_override( "demo_fov_override", "0", FCVAR_CLIENTDLL | FCVAR_DONTRECORD, "If nonzero, this value will be used to override FOV during demo playback." );

@@ -87,7 +87,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#define DAMAGE_FORCE_SCALE_SELF				9
+#define DAMAGE_FORCE_SCALE_SELF				3
 
 extern bool IsInCommentaryMode( void );
 
@@ -5067,7 +5067,7 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 
 
 	//if (nCanUseHitLocations || (info_modified.GetDamageType() & DMG_USE_HITLOCATIONS))
-	if (true)
+	if (pWpn && !pWpn->IsWeapon(TF_WEAPON_FLAMETHROWER))
 	{
 		switch ( ptr->hitgroup )
 		{
@@ -5117,7 +5117,9 @@ void CTFPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 						CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pWpn, flDamage, headshot_damage_modify );
 
 						
-						if (!pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_DECAP) || !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_CLASSIC) || !pWpn->IsWeapon(TF_WEAPON_ROCKETLAUNCHER) || pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) || !pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) || !pWpn->IsWeapon(TF_WEAPON_FLAMETHROWER))
+						if (!pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE) && !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_DECAP) && !pWpn->IsWeapon(TF_WEAPON_SNIPERRIFLE_CLASSIC) 
+							&& !pWpn->IsWeapon(TF_WEAPON_ROCKETLAUNCHER) && pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) && !pWpn->IsWeapon(TF_WEAPON_GRENADELAUNCHER) 
+							&& !pWpn->IsWeapon(TF_WEAPON_FLAMETHROWER))
 						{
 							damageBits &= ~DMG_CRITICAL;
 							damageBits |= DMG_MINICRITICAL;
@@ -6333,13 +6335,8 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			if ( tf_damage_lineardist.GetBool() )
 			{
 				float flBaseDamage = info.GetDamage() - flRandomDamage;
-				if ( pWeapon && pWeapon->GetWeaponID() == TF_WEAPON_CROSSBOW )
-				{
-					// If we're a crossbow, invert our damage formula.
-					flDamage = flBaseDamage - RandomFloat( 0, flRandomDamage * 2 );
-				}
-				else
-					flDamage = flBaseDamage + RandomFloat( 0, flRandomDamage * 2 );
+				
+				flDamage = flBaseDamage + RandomFloat( 0, flRandomDamage * 2 );
 			}
 			else
 			{
@@ -6369,13 +6366,6 @@ int CTFPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 					}
 				}
 					
-				if ( pWeapon && pWeapon->GetWeaponID() == TF_WEAPON_CROSSBOW )
-				{
-					// If we're a crossbow, change our falloff band so that our 100% is at long range.
-					flCenter = RemapVal( flDistance, 0.0, (2.0 * flOptimalDistance), 0.0, 0.5 );
-				}
-				
-				
 
 				
 				/*if (flFalloffMult != 0.0f)
@@ -7479,7 +7469,7 @@ void CTFPlayer::ApplyPushFromDamage( const CTakeDamageInfo &info, Vector &vecDir
 		if ( IsPlayerClass( TF_CLASS_SOLDIER ) && ( info.GetDamageType() & DMG_BLAST ) )
 		{
 			// Since soldier only takes reduced self-damage while in mid-air we have to accomodate for that.
-			float flScale = 1.0f;
+			float flScale = 0.3f;
 
 			if ( GetFlags() & FL_ONGROUND )
 			{
@@ -7553,13 +7543,13 @@ void CTFPlayer::ApplyPushFromDamage( const CTakeDamageInfo &info, Vector &vecDir
 			if ( IsPlayerClass( TF_CLASS_HEAVYWEAPONS ) )
 			{
 				// Heavies take less push from non sentryguns
-				vecForce *= 0.5;
+				vecForce *= 0.85;
 			}
 		}
 
 		if ( info.GetDamageType() & DMG_BLAST )
 		{
-			vecForce *= 0.3;
+			vecForce *= 0.70;
 			m_bBlastLaunched = true;
 		}
 		

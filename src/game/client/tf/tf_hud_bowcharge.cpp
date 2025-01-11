@@ -169,6 +169,9 @@ void CHudBowChargeMeter::FireGameEvent( IGameEvent *event )
 						break;
 					}
 					case TF_PROJECTILE_HEALING_BOLT:
+					case TF_PROJECTILE_SYRINGE:
+					case TF_PROJECTILE_NAIL:
+					case TF_PROJECTILE_DART:
 					{
 						szModel = g_pszArrowModels[1];
 						flModelScale = 1.6f;

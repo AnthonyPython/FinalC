@@ -34,6 +34,7 @@
 CREATE_SIMPLE_WEAPON_TABLE( TFSMG, tf_weapon_smg )
 CREATE_SIMPLE_WEAPON_TABLE( TFSMG_Primary, tf_weapon_smg_primary )
 CREATE_SIMPLE_WEAPON_TABLE( TFSMG_Charged, tf_weapon_charged_smg )
+CREATE_SIMPLE_WEAPON_TABLE( TFSMG_Assault, tf_weapon_assaultrifle)
 
 // Server specific.
 //#ifndef CLIENT_DLL

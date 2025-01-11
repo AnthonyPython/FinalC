@@ -213,6 +213,12 @@ void CreateTFCrossbowBolt( const Vector &vecOrigin, const Vector &vecDirection, 
 			pszModel = g_pszArrowModelClient[5];
 			flModelScale = 1.f;
 			break;
+		case TF_PROJECTILE_SYRINGE:
+		case TF_PROJECTILE_NAIL:
+		case TF_PROJECTILE_DART:
+			pszModel = g_pszArrowModelClient[1];
+			flModelScale = 1.6f;
+			break;
 		default:
 			Warning( " Unsupported Projectile type in CreateTFCrossbowBolt - %d\n\n", iProjType );
 			return;

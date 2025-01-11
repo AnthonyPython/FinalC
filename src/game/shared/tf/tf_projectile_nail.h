@@ -10,14 +10,14 @@
 #endif
 
 #include "cbase.h"
-#include "tf_projectile_base.h"
+#include "tf_projectile_arrow.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: The base Nail projectile
 //-----------------------------------------------------------------------------
-class CTFProjectile_Nail : public CTFBaseProjectile
+class CTFProjectile_Nail : public CTFProjectile_Arrow
 {
-	DECLARE_CLASS(CTFProjectile_Nail, CTFBaseProjectile);
+	DECLARE_CLASS(CTFProjectile_Nail, CTFProjectile_Arrow);
 
 public:
 
@@ -25,7 +25,7 @@ public:
 	~CTFProjectile_Nail();
 
 	// Creation.
-	static CTFProjectile_Nail *Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner = NULL, CBaseEntity *pScorer = NULL, bool bCritical = false, CBaseEntity *pWeapon = NULL);
+	//static CTFProjectile_Nail *Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner = NULL, CBaseEntity *pScorer = NULL, bool bCritical = false, CBaseEntity *pWeapon = NULL);
 
 	virtual const char *GetProjectileModelName(void);
 	virtual float GetGravity(void);
@@ -36,9 +36,9 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: Identical to a nail except for model used
 //-----------------------------------------------------------------------------
-class CTFProjectile_Syringe : public CTFBaseProjectile
+class CTFProjectile_Syringe : public CTFProjectile_Arrow
 {
-	DECLARE_CLASS( CTFProjectile_Syringe, CTFBaseProjectile );
+	DECLARE_CLASS( CTFProjectile_Syringe, CTFProjectile_Arrow);
 
 public:
 
@@ -46,7 +46,7 @@ public:
 	~CTFProjectile_Syringe();
 
 	// Creation.
-	static CTFProjectile_Syringe *Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner = NULL, CBaseEntity *pScorer = NULL, bool bCritical = false, CBaseEntity *pWeapon = NULL);
+	//static CTFProjectile_Syringe *Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner = NULL, CBaseEntity *pScorer = NULL, bool bCritical = false, CBaseEntity *pWeapon = NULL);
 
 	virtual const char *GetProjectileModelName( void );
 	virtual float GetGravity( void );
@@ -57,9 +57,9 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: Modified syringe for the TF_WEAPON_TRANQ weapon
 //-----------------------------------------------------------------------------
-class CTFProjectile_Dart : public CTFBaseProjectile
+class CTFProjectile_Dart : public CTFProjectile_Arrow
 {
-	DECLARE_CLASS(CTFProjectile_Dart, CTFBaseProjectile);
+	DECLARE_CLASS(CTFProjectile_Dart, CTFProjectile_Arrow);
 
 public:
 
@@ -67,7 +67,7 @@ public:
 	~CTFProjectile_Dart();
 
 	// Creation.
-	static CTFProjectile_Dart *Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner = NULL, CBaseEntity *pScorer = NULL, bool bCritical = false, CBaseEntity *pWeapon = NULL);
+	//static CTFProjectile_Dart *Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner = NULL, CBaseEntity *pScorer = NULL, bool bCritical = false, CBaseEntity *pWeapon = NULL);
 
 	virtual const char *GetProjectileModelName(void);
 	virtual float GetGravity(void);

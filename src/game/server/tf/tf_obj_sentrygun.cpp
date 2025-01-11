@@ -99,40 +99,7 @@ enum target_ranges
 
 #define VECTOR_CONE_TF_SENTRY		Vector( 0.1, 0.1, 0 )
 
-class CSentryTouchTrigger : public CBaseTrigger
-{
-	DECLARE_CLASS(CSentryTouchTrigger, CBaseTrigger);
 
-public:
-	CSentryTouchTrigger() {}
-
-	void Spawn(void)
-	{
-		BaseClass::Spawn();
-		AddSpawnFlags(SF_TRIGGER_ALLOW_CLIENTS);
-		InitTrigger();
-	}
-
-	virtual void StartTouch(CBaseEntity* pEntity)
-	{
-		CBaseEntity* pParent = GetOwnerEntity();
-
-		if (pParent)
-		{
-			pParent->StartTouch(pEntity);
-		}
-	}
-
-	virtual void EndTouch(CBaseEntity* pEntity)
-	{
-		CBaseEntity* pParent = GetOwnerEntity();
-
-		if (pParent)
-		{
-			pParent->EndTouch(pEntity);
-		}
-	}
-};
 
 LINK_ENTITY_TO_CLASS(sentry_touch_trigger, CSentryTouchTrigger);
 
@@ -310,6 +277,7 @@ void CObjectSentrygun::Spawn()
 
 	BaseClass::Spawn();
 
+
 	SetViewOffset( SENTRYGUN_EYE_OFFSET_LEVEL_1 );
 
 	UTIL_SetSize( this, SENTRYGUN_MINS, SENTRYGUN_MAXS );
@@ -324,6 +292,7 @@ void CObjectSentrygun::Spawn()
 		SetHealth( MINI_SENTRYGUN_MAX_HEALTH );
 		MakeMiniBuilding();
 	}
+	SetCollisionGroup(TFCOLLISION_GROUP_OBJECT);
 
 	m_iAmmoMetal = 0;
 
@@ -600,7 +569,7 @@ void CObjectSentrygun::OnGoActive( void )
 
 	m_flNextAmmoDispense = gpGlobals->curtime + 0.5;
 
-	CSentryTouchTrigger* pTriggerEnt;
+	/*CSentryTouchTrigger* pTriggerEnt;
 
 	
 	{
@@ -608,10 +577,12 @@ void CObjectSentrygun::OnGoActive( void )
 		if (pTriggerEnt)
 		{
 			pTriggerEnt->SetSolid(SOLID_BBOX);
+			//pTriggerEnt->SetOwnerEntity(this);
+			//pTriggerEnt->SetCollisionGroup(TFCOLLISION_GROUP_RESPAWNROOMS);
 			UTIL_SetSize(pTriggerEnt, Vector(-70, -70, -70), Vector(70, 70, 70));
 			m_hTouchTrigger = pTriggerEnt;
 		}
-	}
+	}*/
 
 	BaseClass::OnGoActive();
 

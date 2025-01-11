@@ -17,7 +17,7 @@
 #include "tf_weaponbase_grenadeproj.h"
 #include "soundent.h"
 #include "KeyValues.h"
-#include "tf_projectile_nail.h"
+#include "tf_projectile_arrow.h"
 #include "physics_saverestore.h"
 #include "phys_controller.h"
 #endif
@@ -226,7 +226,8 @@ void CTFGrenadeNailProjectile::EmitNails( void )
 		QAngle angNail( random->RandomFloat( -3, 3 ), m_flNailAngle, 0 );
 
 		// Emit a nail
-		CTFProjectile_Nail *pNail = CTFProjectile_Nail::Create( GetAbsOrigin(), angNail, this, GetThrower() );	
+		
+		CTFProjectile_Arrow *pNail = CTFProjectile_Arrow::Create(this, GetAbsOrigin(), angNail, 1000.0f, GetGravity(), false, this, GetThrower(), TF_PROJECTILE_NAIL);
 		if ( pNail )
 		{
 			pNail->SetDamage( 18 );

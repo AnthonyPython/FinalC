@@ -265,12 +265,12 @@ CBaseEntity *CTFWeaponBaseGun::FireProjectile( CTFPlayer *pPlayer )
 			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 			break;	
 		
-		case TF_PROJECTILE_SYRINGE:
+		/*case TF_PROJECTILE_SYRINGE:
 		case TF_PROJECTILE_NAIL:
 		case TF_PROJECTILE_DART:
 			pProjectile = FireNail( pPlayer, iProjectile );
 			pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
-			break;
+			break;*/
 
 		case TF_PROJECTILE_PIPEBOMB:
 			pProjectile = FirePipeBomb( pPlayer, 0 );
@@ -316,6 +316,9 @@ CBaseEntity *CTFWeaponBaseGun::FireProjectile( CTFPlayer *pPlayer )
 		case TF_PROJECTILE_FESTIVE_ARROW:
 		case TF_PROJECTILE_FESTIVE_HEALING_BOLT:
 		case TF_PROJECTILE_GRAPPLINGHOOK:
+		case TF_PROJECTILE_NAIL:
+		case TF_PROJECTILE_SYRINGE:
+		case TF_PROJECTILE_DART:
 			pProjectile = FireArrow( pPlayer, iProjectile );
 			pPlayer->DoAnimationEvent(PLAYERANIMEVENT_ATTACK_PRIMARY);
 			break;
@@ -702,7 +705,7 @@ CBaseEntity *CTFWeaponBaseGun::FireEnergyOrb(CTFPlayer *pPlayer)
 //-----------------------------------------------------------------------------
 // Purpose: Fire a projectile nail
 //-----------------------------------------------------------------------------
-CBaseEntity *CTFWeaponBaseGun::FireNail( CTFPlayer *pPlayer, int iSpecificNail )
+/*CBaseEntity *CTFWeaponBaseGun::FireNail( CTFPlayer *pPlayer, int iSpecificNail )
 {
 	PlayWeaponShootSound();
 
@@ -746,7 +749,7 @@ CBaseEntity *CTFWeaponBaseGun::FireNail( CTFPlayer *pPlayer, int iSpecificNail )
 	}
 	
 	return pProjectile;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Fire a  pipe bomb
@@ -928,22 +931,71 @@ CBaseEntity *CTFWeaponBaseGun::FireArrow( CTFPlayer *pPlayer, int iType )
 {
 	PlayWeaponShootSound();
 
-#ifdef GAME_DLL
+
+
 	Vector vecSrc;
 	QAngle angForward;
-	Vector vecOffset( 23.5f, 12.0f, -3.0f );
-	if ( pPlayer->GetFlags() & FL_DUCKING )
-	{
-		vecOffset.z = 8.0f;
-	}
+	Vector vecOffset(23.5f, 12.0f, -3.0f);
+
+	/*case TF_PROJECTILE_NAIL:
+	case TF_PROJECTILE_SYRINGE:
+	case TF_PROJECTILE_DART:*/
+
+#ifdef GAME_DLL
+	
 	/*if ( IsWeapon( TF_WEAPON_COMPOUND_BOW ) )
 	{
 		// Valve were apparently too lazy to fix the viewmodel and just flipped it through the code.
 		vecOffset.y *= -1.0f;
 	}*/
-	GetProjectileFireSetup( pPlayer, vecOffset, &vecSrc, &angForward, false, true );
+	
 
-	CTFProjectile_Arrow *pProjectile = CTFProjectile_Arrow::Create( this, vecSrc, angForward, GetProjectileSpeed(), GetProjectileGravity(), IsFlameArrow(), pPlayer, pPlayer, iType );
+	
+
+	// Add some extra spread to our nails.
+	const float flSpread = 1.5 + GetProjectileSpread();
+
+	CTFProjectile_Arrow* pProjectile = NULL;
+	switch (iType)
+	{
+	case TF_PROJECTILE_SYRINGE:
+		
+		vecOffset.x = 16.0f;
+		vecOffset.y = 6.0f;
+		vecOffset.z = -8.0f;
+		GetProjectileFireSetup(pPlayer, vecOffset, &vecSrc, &angForward, false, true);
+
+		angForward.x += RandomFloat(-flSpread, flSpread);
+		angForward.y += RandomFloat(-flSpread, flSpread);
+		pProjectile = CTFProjectile_Arrow::Create(this, vecSrc, angForward, 1000.0f /*GetProjectileSpeed()*/, 0.3f/*GetProjectileGravity()*/, IsFlameArrow(), pPlayer, pPlayer, iType);
+		break;
+
+	case TF_PROJECTILE_NAIL:
+		vecOffset.x = 16.0f;
+		vecOffset.y = 6.0f;
+		vecOffset.z = -8.0f;
+		GetProjectileFireSetup(pPlayer, vecOffset, &vecSrc, &angForward, false, true);
+		pProjectile = CTFProjectile_Arrow::Create(this, vecSrc, angForward, 1000.0f /*GetProjectileSpeed()*/, 0.3f/*GetProjectileGravity()*/, IsFlameArrow(), pPlayer, pPlayer, iType);
+		break;
+
+	case TF_PROJECTILE_DART:
+		vecOffset.x = 16.0f;
+		vecOffset.y = 6.0f;
+		vecOffset.z = -8.0f;
+		GetProjectileFireSetup(pPlayer, vecOffset, &vecSrc, &angForward, false, true);
+		pProjectile = CTFProjectile_Arrow::Create(this, vecSrc, angForward, 2000.0f /*GetProjectileSpeed()*/, 0.0f /*GetProjectileGravity()*/, IsFlameArrow(), pPlayer, pPlayer, iType);
+		break;
+
+	default:
+	
+		if (pPlayer->GetFlags() & FL_DUCKING)
+		{
+			vecOffset.z = 8.0f;
+		}
+		GetProjectileFireSetup(pPlayer, vecOffset, &vecSrc, &angForward, false, true);
+		pProjectile = CTFProjectile_Arrow::Create(this, vecSrc, angForward, GetProjectileSpeed(), GetProjectileGravity(), IsFlameArrow(), pPlayer, pPlayer, iType);
+	}
+
 	if ( pProjectile )
 	{
 		pProjectile->SetCritical( IsCurrentAttackACrit() );

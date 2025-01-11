@@ -11,6 +11,8 @@
 #pragma once
 #endif
 
+#include "triggers.h"
+
 #include "tf_obj.h"
 #include "tf_projectile_rocket.h"
 
@@ -27,6 +29,42 @@ enum
 
 #define SF_OBJ_UPGRADABLE			0x0004
 #define SF_SENTRY_INFINITE_AMMO		0x0008
+
+
+class CSentryTouchTrigger : public CBaseTrigger
+{
+	DECLARE_CLASS(CSentryTouchTrigger, CBaseTrigger);
+
+public:
+	CSentryTouchTrigger() {}
+
+	void Spawn(void)
+	{
+		BaseClass::Spawn();
+		AddSpawnFlags(SF_TRIGGER_ALLOW_CLIENTS);
+		InitTrigger();
+	}
+
+	virtual void StartTouch(CBaseEntity* pEntity)
+	{
+		CBaseEntity* pParent = GetOwnerEntity();
+
+		if (pParent)
+		{
+			pParent->StartTouch(pEntity);
+		}
+	}
+
+	virtual void EndTouch(CBaseEntity* pEntity)
+	{
+		CBaseEntity* pParent = GetOwnerEntity();
+
+		if (pParent)
+		{
+			pParent->EndTouch(pEntity);
+		}
+	}
+};
 
 // ------------------------------------------------------------------------ //
 // Sentrygun object that's built by the player

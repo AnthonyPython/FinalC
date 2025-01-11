@@ -65,3 +65,27 @@
 	"volume"	".75"
 	"wave"		")weapons/medigun_heal_detach.wav"
 }
+
+"WeaponAK.fire"
+{
+	"channel"	"CHAN_WEAPON"
+	"soundlevel"	"SNDLVL_74dB"
+	"volume"	".75"
+	"wave"		")weapons/ak47/ak47-1.wav"
+}
+
+"WeaponAK.clipin"
+{
+	"channel"	"CHAN_WEAPON"
+	"soundlevel"	"SNDLVL_74dB"
+	"volume"	".75"
+	"wave"		")weapons/ak47/ak47_clipin.wav"
+}
+
+"WeaponAK.clipout"
+{
+	"channel"	"CHAN_WEAPON"
+	"soundlevel"	"SNDLVL_74dB"
+	"volume"	".75"
+	"wave"		")weapons/ak47/ak47_clipout.wav"
+}

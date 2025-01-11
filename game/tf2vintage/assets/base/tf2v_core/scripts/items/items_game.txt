@@ -1221,14 +1221,15 @@
 				}
 			}
 		}
-		"weapon_stiker_knife"
+		"weapon_striker_knife"
 		{
 			"item_class"	"tf_weapon_bat"
 			"item_type_name"	"#TF_Weapon_Knife"
 			"item_name"	"#TF_Weapon_Knife"
 			"item_slot"	"melee"
+			"anim_slot" "MELEE_ALLCLASS"
 			"image_inventory"	"backpack/weapons/w_models/w_knife"
-			"model_player"	"models/weapons/c_models/c_knife/c_knife.mdl"
+			"model_player"	"models/weapons/c_models/c_combat_knife/c_combat_knife.mdl"
 			"used_by_classes"
 			{
 				"demoman" "1"
@@ -1339,8 +1340,37 @@
 			"model_player"	"models/weapons/c_models/c_fireaxe_pyro/c_fireaxe_pyro.mdl"
 			"used_by_classes"
 			{
-				"pyro"	"1"
 				"soldier"	"1"
+			}
+			"static_attrs"
+			{
+				"min_viewmodel_offset"					"10 0 -9"
+				"use hit location"						"1"
+				"headshots become minicrits"			"1"
+			}
+			"attributes"
+			{
+				"allowed in medieval mode"
+				{
+					"attribute_class"	"allowed_in_medieval_mode"
+					"value"	"1"
+				}
+			}
+		}
+		"weapon_trimmer"
+		{
+			"item_class"	"tf_weapon_fireaxe"
+			"item_type_name"	"Trimmer"
+			"item_name"	"#TF_Weapon_FireAxe"
+			"item_slot"	"melee"
+			"anim_slot" "MELEE_ALLCLASS"
+			"item_slot"	"melee"
+			"anim_slot" "MELEE_ALLCLASS"
+			"image_inventory"	"backpack/weapons/c_models/c_fireaxe_pyro/c_fireaxe_pyro"
+			"model_player"	"models/weapons/c_models/firebat/c_hedgetrim/c_hedgetrim.mdl"
+			"used_by_classes"
+			{
+				"pyro"	"1"
 			}
 			"static_attrs"
 			{
@@ -5725,6 +5755,17 @@
 				}
 			}
 		}
+		"177"
+		{
+			"name"	"Broken_Trimmers"
+			"prefab"	"weapon_trimmer"
+			"item_quality" "vintage"
+			"item_name"	"Trimmer"
+			"item_description"	"Broken just like me. -firebat"
+			"year"			"2011"
+			"show_in_armory" "1"
+			"baseitem"	"1"
+		}
 		"214"
 		{
 			"name"	"The Powerjack"
@@ -8870,18 +8911,20 @@
 		}
 		"1191"
 		{
-			"name"	"Frag Grenae"
+			"name"	"Frag Grenade"
 			"prefab"	"weapon_frag"
-			"year"			"2009"
+			"item_name"		"Frag Grenade"
+			"item_description"		"why shoot when you can frag them!"
+			"year"			"2011"
 			"item_quality" 			"vintage"
 			"baseitem" "1"
 		}
 		"1192"
 		{
 			"name"	"TF_WEAPON_KNIFE"
-			"prefab"	"weapon_stiker_knife"
-			"item_quality" "normal"
-			"year"			"2007"
+			"prefab"	"weapon_striker_knife"
+			"item_quality" "vintage"
+			"year"			"2011"
 			"baseitem"	"1"
 		}
 		"1193"
@@ -8989,8 +9032,12 @@
 					"attribute_class"	"headshots_become_minicrits"
 					"value" "1"
 				}				
-			}	
-			
+			}
+			"visuals"
+			{
+				"sound_single_shot" "WeaponAK.fire"
+				"sound_burst" "WeaponAK.fire"
+			}
 		}
 		"1195"
 		{

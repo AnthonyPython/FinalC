@@ -23,6 +23,7 @@
 	#include "tf_obj.h"
 	#include "tf_halloween_boss.h"
 	#include "tf_robot_destruction_robot.h"
+	#include "tf_obj_sentrygun.h"
 #endif
 
 #ifdef GAME_DLL
@@ -134,6 +135,12 @@ CTFProjectile_Arrow *CTFProjectile_Arrow::Create( CBaseEntity *pWeapon, const Ve
 		case TF_PROJECTILE_FESTIVE_HEALING_BOLT:
 			pszEntClass = "tf_projectile_healing_bolt";
 			break;
+		case TF_PROJECTILE_NAIL:
+			pszEntClass = "tf_projectile_nail";
+		case TF_PROJECTILE_DART:
+			pszEntClass = "tf_projectile_dart";
+		case TF_PROJECTILE_SYRINGE:
+			pszEntClass = "tf_projectile_syringe";
 		default:
 			pszEntClass = "tf_projectile_arrow";
 			break;
@@ -174,6 +181,9 @@ CTFProjectile_Arrow *CTFProjectile_Arrow::Create( CBaseEntity *pWeapon, const Ve
 			case TF_PROJECTILE_HEALING_BOLT:
 				pszArrowModel = "models/weapons/w_models/w_syringe_proj.mdl";
 				break;
+			case TF_PROJECTILE_NAIL:
+				pszArrowModel = "models/weapons/w_models/w_syringe_proj.mdl";
+				break;
 			case TF_PROJECTILE_BUILDING_REPAIR_BOLT:
 				pszArrowModel = "models/weapons/w_models/w_repair_claw.mdl";
 				break;
@@ -188,6 +198,24 @@ CTFProjectile_Arrow *CTFProjectile_Arrow::Create( CBaseEntity *pWeapon, const Ve
 				break;
 		}
 		
+
+		switch (pOwner->GetTeamNumber())
+		{
+		case TF_TEAM_RED:
+			pArrow->m_nSkin = 0;
+			break;
+		case TF_TEAM_BLUE:
+			pArrow->m_nSkin = 1;
+			break;
+		case TF_TEAM_GREEN:
+			pArrow->m_nSkin = 2;
+			break;
+		case TF_TEAM_YELLOW:
+			pArrow->m_nSkin = 3;
+			break;
+
+		}
+
 		if ( iType == TF_PROJECTILE_ARROW || iType == TF_PROJECTILE_FESTIVE_ARROW )	// Huntsman Arrows.
 		{
 			// Set flame arrow.
@@ -201,6 +229,8 @@ CTFProjectile_Arrow *CTFProjectile_Arrow::Create( CBaseEntity *pWeapon, const Ve
 			//Never light on fire.
 			pArrow->SetFlameArrow( false );
 		}
+
+		
 
 		// Set arrow type.
 		pArrow->SetType( iType );
@@ -274,9 +304,9 @@ void CTFProjectile_Arrow::Spawn( void )
 
 	BaseClass::Spawn();
 
-#ifdef TF_ARROW_FIX
-	SetSolidFlags( FSOLID_NOT_SOLID | FSOLID_TRIGGER );
-#endif
+//#ifdef TF_ARROW_FIX
+	SetSolidFlags(  FSOLID_TRIGGER );
+//#endif
 
 	if ( m_iProjType == TF_PROJECTILE_HEALING_BOLT || m_iProjType == TF_PROJECTILE_FESTIVE_HEALING_BOLT )
 		SetModelScale( 3.0f );
@@ -351,6 +381,7 @@ void CTFProjectile_Arrow::ArrowTouch( CBaseEntity *pOther )
 		bImpactedItem = !InSameTeam( pOther );
 
 	CTFPumpkinBomb *pPumpkin = dynamic_cast<CTFPumpkinBomb *>( pOther );
+	//CSentryTouchTrigger *pSentryTrigger = dynamic_cast<CSentryTouchTrigger*>( pOther );
 
 	if ( pOther->IsSolidFlagSet( FSOLID_TRIGGER | FSOLID_VOLUME_CONTENTS ) && !pPumpkin && !bImpactedItem )
 	{
@@ -373,8 +404,8 @@ void CTFProjectile_Arrow::ArrowTouch( CBaseEntity *pOther )
 	CTFRobotDestruction_Robot *pRobot = dynamic_cast<CTFRobotDestruction_Robot *>( pOther );
 	//CTFMerasmusTrickOrTreatProp *pMerasProp = dynamic_cast<CTFMerasmusTrickOrTreatProp *>( pOther );
 
-	if ( !FNullEnt( pOther->edict() ) &&
-		( pActor != nullptr || pPumpkin != nullptr/* || pMerasProp != nullptr*/ || pRobot != nullptr || bImpactedItem ) )
+	if ( !FNullEnt( pOther->edict() )  &&
+		( pActor != nullptr || pPumpkin != nullptr  /* || pMerasProp != nullptr*/ || pRobot != nullptr || bImpactedItem ) )
 	{
 		CBaseAnimating *pAnimating = dynamic_cast<CBaseAnimating *>( pOther );
 		if ( !pAnimating )
@@ -555,7 +586,11 @@ bool CTFProjectile_Arrow::StrikeTarget( mstudiobbox_t *pBox, CBaseEntity *pTarge
 
 			if ( bHeadshot )
 			{
-				iDmgType |= DMG_CRITICAL;
+				if (m_iProjType == TF_PROJECTILE_ARROW || m_iProjType == TF_PROJECTILE_FESTIVE_ARROW)
+					iDmgType |= DMG_CRITICAL;
+				else
+					iDmgType |= DMG_MINICRITICAL;
+				
 				iDmgCustom = TF_DMG_CUSTOM_HEADSHOT;
 			}
 
@@ -791,7 +826,7 @@ int	CTFProjectile_Arrow::GetDamageType()
 		}
 	}
 
-	if ( m_iProjType == TF_PROJECTILE_HEALING_BOLT || m_iProjType == TF_PROJECTILE_FESTIVE_HEALING_BOLT || m_iProjType == TF_PROJECTILE_BUILDING_REPAIR_BOLT )
+	if ( m_iProjType == TF_PROJECTILE_BUILDING_REPAIR_BOLT )
 	{
 		iDmgType |= DMG_USEDISTANCEMOD;
 	}
@@ -916,6 +951,7 @@ void CTFProjectile_Arrow::CreateTrail( void )
 		return;
 
 	if ( m_iProjType == TF_PROJECTILE_HEALING_BOLT || m_iProjType == TF_PROJECTILE_FESTIVE_HEALING_BOLT || m_iProjType == TF_PROJECTILE_GRAPPLINGHOOK )
+	
 		return;
 
 	CSpriteTrail *pTrail = CSpriteTrail::SpriteTrailCreate( GetTrailParticleName(), GetAbsOrigin(), true );
@@ -1133,6 +1169,17 @@ void C_TFProjectile_Arrow::OnDataChanged( DataUpdateType_t updateType )
 
 //-----------------------------------------------------------------------------
 // Purpose: 
+// Output : const char
+//-----------------------------------------------------------------------------
+const char* GetSyringeTrailParticleName(int iTeamNumber, bool bCritical)
+{
+	const char* pszFormat = bCritical ? "nailtrails_medic_%s_crit" : "nailtrails_medic_%s";
+
+	return ConstructTeamParticle(pszFormat, iTeamNumber, true);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
 //-----------------------------------------------------------------------------
 void C_TFProjectile_Arrow::CreateCritTrail( void )
 {
@@ -1145,7 +1192,14 @@ void C_TFProjectile_Arrow::CreateCritTrail( void )
 		m_pCritEffect = NULL;
 	}
 
-	char const *pszEffect = ConstructTeamParticle( "critical_rocket_%s", GetTeamNumber() );
+	char const* pszEffect = ConstructTeamParticle("critical_rocket_%s", GetTeamNumber());
+
+	if (m_iProjType == TF_PROJECTILE_NAIL || m_iProjType == TF_PROJECTILE_SYRINGE || m_iProjType == TF_PROJECTILE_DART)
+	{
+		pszEffect = GetSyringeTrailParticleName(GetTeamNumber(), true);
+	}
+
+	
 	m_pCritEffect = ParticleProp()->Create( pszEffect, PATTACH_ABSORIGIN_FOLLOW );
 }
 
@@ -1160,12 +1214,34 @@ void C_TFProjectile_Arrow::ClientThink( void )
 		m_flCheckNearMiss = gpGlobals->curtime + 0.05f;
 	}
 
-	if ( !m_bCritical )
+	if (!m_bCritical)
 	{
-		if ( m_pCritEffect )
+		if (m_pCritEffect)
 		{
-			ParticleProp()->StopEmission( m_pCritEffect );
+			ParticleProp()->StopEmission(m_pCritEffect);
 			m_pCritEffect = NULL;
+		}
+
+
+
+		if (m_iProjType == TF_PROJECTILE_NAIL || m_iProjType == TF_PROJECTILE_SYRINGE || m_iProjType == TF_PROJECTILE_DART)
+		{
+			if (!m_pTrailEffect)
+			{
+				char const* pszEffect = GetSyringeTrailParticleName(GetTeamNumber(), false);
+				m_pTrailEffect = ParticleProp()->Create(pszEffect, PATTACH_ABSORIGIN_FOLLOW);
+			}
+
+		}
+		
+	}
+	else
+	{
+
+		if (m_pTrailEffect)
+		{
+			ParticleProp()->StopEmission(m_pTrailEffect);
+			m_pTrailEffect = NULL;
 		}
 	}
 

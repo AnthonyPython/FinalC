@@ -15,6 +15,7 @@
 #define CTFSMG C_TFSMG
 #define CTFSMG_Primary C_TFSMG_Primary
 #define CTFSMG_Charged C_TFSMG_Charged
+#define CTFSMG_Assault C_TFSMG_Assault
 #endif
 
 //=============================================================================
@@ -50,6 +51,16 @@ public:
 	DECLARE_CLASS( CTFSMG_Primary, CTFSMG );
 	DECLARE_NETWORKCLASS();
 	DECLARE_PREDICTABLE();
+};
+
+class CTFSMG_Assault : public CTFSMG
+{
+public:
+	DECLARE_CLASS(CTFSMG_Assault, CTFSMG);
+	DECLARE_NETWORKCLASS();
+	DECLARE_PREDICTABLE();
+
+	virtual int		GetWeaponID(void) const { return TF_WEAPON_ASSAULTRIFLE; }
 };
 
 class CTFSMG_Charged : public CTFSMG

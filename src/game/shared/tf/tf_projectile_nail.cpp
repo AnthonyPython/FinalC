@@ -46,14 +46,6 @@ CTFProjectile_Syringe::~CTFProjectile_Syringe()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-CTFProjectile_Syringe *CTFProjectile_Syringe::Create(const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, CBaseEntity *pScorer, bool bCritical, CBaseEntity *pWeapon )
-{
-	return static_cast<CTFProjectile_Syringe *>(CTFBaseProjectile::Create("tf_projectile_syringe", vecOrigin, vecAngles, pOwner, CTFProjectile_Syringe::GetInitialVelocity(), g_sModelIndexSyringe, SYRINGE_DISPATCH_EFFECT, pScorer, bCritical, pWeapon ) );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose:
-//-----------------------------------------------------------------------------
 const char *CTFProjectile_Syringe::GetProjectileModelName( void )
 {
 	return SYRINGE_MODEL;
@@ -66,60 +58,6 @@ float CTFProjectile_Syringe::GetGravity( void )
 {
 	return SYRINGE_GRAVITY;
 }
-
-#ifdef CLIENT_DLL
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : const char
-//-----------------------------------------------------------------------------
-const char *GetSyringeTrailParticleName( int iTeamNumber, bool bCritical )
-{
-	const char *pszFormat = bCritical ? "nailtrails_medic_%s_crit" : "nailtrails_medic_%s";
-
-	return ConstructTeamParticle( pszFormat, iTeamNumber, true );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void ClientsideProjectileSyringeCallback( const CEffectData &data )
-{
-	// Get the syringe and add it to the client entity list, so we can attach a particle system to it.
-	C_TFPlayer *pPlayer = dynamic_cast<C_TFPlayer *>( ClientEntityList().GetBaseEntityFromHandle( data.m_hEntity ) );
-	if ( pPlayer )
-	{
-		C_LocalTempEntity *pSyringe = ClientsideProjectileCallback( data, SYRINGE_GRAVITY );
-		if ( pSyringe )
-		{
-			switch ( pPlayer->GetTeamNumber() )
-			{
-				case TF_TEAM_RED:
-					pSyringe->m_nSkin = 0;
-					break;
-				case TF_TEAM_BLUE:
-					pSyringe->m_nSkin = 1;
-					break;
-				case TF_TEAM_GREEN:
-					pSyringe->m_nSkin = 2;
-					break;
-				case TF_TEAM_YELLOW:
-					pSyringe->m_nSkin = 3;
-					break;
-					
-			}
-			bool bCritical = ( ( data.m_nDamageType & DMG_CRITICAL ) != 0 );
-			pSyringe->AddParticleEffect( GetSyringeTrailParticleName( pPlayer->GetTeamNumber(), bCritical ) );
-			pSyringe->AddEffects( EF_NOSHADOW );
-			pSyringe->flags |= FTENT_USEFASTCOLLISIONS;
-		}
-	}
-}
-
-DECLARE_CLIENT_EFFECT( SYRINGE_DISPATCH_EFFECT, ClientsideProjectileSyringeCallback );
-
-#endif
-
 
 // Nail projectile used by the Nailgun
 
@@ -149,14 +87,6 @@ CTFProjectile_Nail::~CTFProjectile_Nail()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-CTFProjectile_Nail *CTFProjectile_Nail::Create( const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, CBaseEntity *pScorer, bool bCritical, CBaseEntity *pWeapon )
-{
-	return static_cast<CTFProjectile_Nail *>(CTFBaseProjectile::Create("tf_projectile_nail", vecOrigin, vecAngles, pOwner, CTFProjectile_Nail::GetInitialVelocity(), g_sModelIndexNail, NAILGUN_NAIL_DISPATCH_EFFECT, pScorer, bCritical, pWeapon ) );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose:
-//-----------------------------------------------------------------------------
 const char *CTFProjectile_Nail::GetProjectileModelName( void )
 {
 	return NAILGUN_NAIL_MODEL;
@@ -172,46 +102,7 @@ float CTFProjectile_Nail::GetGravity( void )
 	return NAILGUN_NAIL_GRAVITY;
 }
 
-#ifdef CLIENT_DLL
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void ClientsideProjectileNailCallback( const CEffectData &data )
-{
-	C_TFPlayer *pPlayer = dynamic_cast<C_TFPlayer *>( ClientEntityList().GetBaseEntityFromHandle( data.m_hEntity ) );
-	if ( pPlayer )
-	{
-		C_LocalTempEntity *pNail = ClientsideProjectileCallback( data, NAILGUN_NAIL_GRAVITY );
-		if ( pNail )
-		{
-			switch ( pPlayer->GetTeamNumber() )
-			{
-				case TF_TEAM_RED:
-					pNail->m_nSkin = 0;
-					break;
-				case TF_TEAM_BLUE:
-					pNail->m_nSkin = 1;
-					break;
-					
-				case TF_TEAM_GREEN:
-					pNail->m_nSkin = 2;
-					break;
-				case TF_TEAM_YELLOW:
-					pNail->m_nSkin = 3;
-					break;
-					
-			}
-			bool bCritical = ( ( data.m_nDamageType & DMG_CRITICAL ) != 0 );
-			pNail->AddParticleEffect( GetSyringeTrailParticleName( pPlayer->GetTeamNumber(), bCritical ) );
-			pNail->AddEffects( EF_NOSHADOW );
-			pNail->flags |= FTENT_USEFASTCOLLISIONS;
-		}
-	}
-}
 
-DECLARE_CLIENT_EFFECT( NAILGUN_NAIL_DISPATCH_EFFECT, ClientsideProjectileNailCallback );
-
-#endif
 
 // Tranqualizer syringe (same as medic's syringe, except with a different gravity and particle effect
 
@@ -242,14 +133,6 @@ CTFProjectile_Dart::~CTFProjectile_Dart()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-CTFProjectile_Dart *CTFProjectile_Dart::Create( const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, CBaseEntity *pScorer, bool bCritical, CBaseEntity *pWeapon )
-{
-	return static_cast<CTFProjectile_Dart *>( CTFBaseProjectile::Create("tf_projectile_dart", vecOrigin, vecAngles, pOwner, CTFProjectile_Dart::GetInitialVelocity(), g_sModelIndexTranqDart, TRANQDART_DISPATCH_EFFECT, pScorer, bCritical, pWeapon ) );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose:
-//-----------------------------------------------------------------------------
 const char *CTFProjectile_Dart::GetProjectileModelName( void )
 {
 	return TRANQDART_MODEL;
@@ -263,43 +146,3 @@ float CTFProjectile_Dart::GetGravity( void )
 	return TRANQDART_GRAVITY;
 }
 
-#ifdef CLIENT_DLL
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void ClientsideProjectileTranqDartCallback( const CEffectData &data )
-{
-	// Get the syringe and add it to the client entity list, so we can attach a particle system to it.
-	C_TFPlayer *pPlayer = dynamic_cast<C_TFPlayer *>( ClientEntityList().GetBaseEntityFromHandle( data.m_hEntity ) );
-	if ( pPlayer )
-	{
-		C_LocalTempEntity *pSyringe = ClientsideProjectileCallback( data, TRANQDART_GRAVITY );
-		if ( pSyringe )
-		{
-			switch ( pPlayer->GetTeamNumber() )
-			{
-				case TF_TEAM_RED:
-					pSyringe->m_nSkin = 0;
-					break;
-				case TF_TEAM_BLUE:
-					pSyringe->m_nSkin = 1;
-					break;
-				case TF_TEAM_GREEN:
-					pSyringe->m_nSkin = 2;
-					break;
-				case TF_TEAM_YELLOW:
-					pSyringe->m_nSkin = 3;
-					break;
-			}
-			bool bCritical = ( ( data.m_nDamageType & DMG_CRITICAL ) != 0 );
-			pSyringe->AddParticleEffect( GetSyringeTrailParticleName( pPlayer->GetTeamNumber(), bCritical ) );
-			pSyringe->AddEffects( EF_NOSHADOW );
-			pSyringe->flags |= FTENT_USEFASTCOLLISIONS;
-		}
-	}
-}
-
-DECLARE_CLIENT_EFFECT( TRANQDART_DISPATCH_EFFECT, ClientsideProjectileTranqDartCallback );
-
-#endif

@@ -12,8 +12,8 @@ WeaponData
 
 		
 	// Attributes TF.
-	"Damage"		"28"
-	"Range"			"8192"
+	"Damage"		"35"
+	"Range"			"12192"
 	"BulletsPerShot"	"1"
 	"Spread"		"0.017"
 	"TimeIdle"		"10.0"
@@ -23,6 +23,7 @@ WeaponData
 	"BrassModel"		"models/weapons/shells/shell_pistol.mdl"
 	"UseRapidFireCrits"	"1"
 	"MaxAmmo"		"150"
+	"Recoil" 		"0.8"
 
 	// Ammo & Clip.
 	"primary_ammo"		"TF_AMMO_PRIMARY"
